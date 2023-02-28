@@ -1,7 +1,9 @@
-# EXEC (EXperiment ExeCutor)
+# KGCW Challenge Tool
 
-EXEC (EXperiment ExeCutor) is a simple tool to execute benchmarks
-on tools which are running in Docker. EXEC exposes a CLI interface `exectool`.
+The KGCW Challenge Tool is based on the EXEC (EXperiment ExeCutor). 
+[EXEC](https://github.com/kg-construct/exectool) is a simple tool 
+to execute benchmarks on tools which are running in Docker.
+EXEC exposes a CLI interface `exectool`.
 
 ## How to use?
 
