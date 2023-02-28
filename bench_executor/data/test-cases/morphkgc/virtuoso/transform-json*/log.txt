@@ -1,2 +1,0 @@
-[2023-01-12 14:18:57,622] INFO     Logger (INFO) initialized for bench_executor.notifier
-[2023-01-12 14:18:57,622] INFO     Logger (INFO) initialized for bench_executor.executor
