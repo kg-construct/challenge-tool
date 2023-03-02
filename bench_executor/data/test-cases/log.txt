@@ -1,0 +1,150 @@
+[2023-03-02 09:00:28,109] INFO     Logger (INFO) initialized for bench_executor.executor
+[2023-03-02 09:00:28,139] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/rmlmapper/fuseki/transform-csv-to-ntriples/metadata.json: Unknown resource "Fuseki"
+[2023-03-02 09:00:28,142] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/rmlmapper/fuseki/transform-json-to-ntriples/metadata.json: Unknown resource "Fuseki"
+[2023-03-02 09:00:28,144] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/rmlmapper/fuseki/transform-mysql-to-ntriples/metadata.json: Unknown resource "Fuseki"
+[2023-03-02 09:00:28,147] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/rmlmapper/fuseki/transform-postgresql-to-ntriples/metadata.json: Unknown resource "PostgreSQL"
+[2023-03-02 09:00:28,149] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/rmlmapper/fuseki/transform-xml-to-ntriples/metadata.json: Unknown resource "Fuseki"
+[2023-03-02 09:00:28,156] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/rmlmapper/virtuoso/transform-postgresql-to-ntriples/metadata.json: Unknown resource "PostgreSQL"
+[2023-03-02 09:00:28,161] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/test-error-command/metadata.json: Unknown command "DOES_NOT_EXIST" for resource "RMLMapper"
+[2023-03-02 09:00:28,162] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/test-incomplete-data/metadata.json: JSON schema violation
+[2023-03-02 09:00:28,163] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/test-missing-parameter/metadata.json: Missing required parameter "output_file" for command "execute_mapping" of resource "RMLMapper"
+[2023-03-02 09:00:28,164] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/test-missing-resource/metadata.json: Unknown resource "DOES_NOT_EXIST"
+[2023-03-02 09:00:28,165] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/test-no-steps/metadata.json: JSON schema violation
+[2023-03-02 09:00:28,165] INFO     Logger (DEBUG) initialized for bench_executor.executor
+[2023-03-02 09:00:28,171] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/rmlmapper/fuseki/transform-csv-to-ntriples/metadata.json: Unknown resource "Fuseki"
+[2023-03-02 09:00:28,173] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/rmlmapper/fuseki/transform-json-to-ntriples/metadata.json: Unknown resource "Fuseki"
+[2023-03-02 09:00:28,174] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/rmlmapper/fuseki/transform-mysql-to-ntriples/metadata.json: Unknown resource "Fuseki"
+[2023-03-02 09:00:28,175] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/rmlmapper/fuseki/transform-postgresql-to-ntriples/metadata.json: Unknown resource "PostgreSQL"
+[2023-03-02 09:00:28,176] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/rmlmapper/fuseki/transform-xml-to-ntriples/metadata.json: Unknown resource "Fuseki"
+[2023-03-02 09:00:28,180] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/rmlmapper/virtuoso/transform-postgresql-to-ntriples/metadata.json: Unknown resource "PostgreSQL"
+[2023-03-02 09:00:28,182] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/test-error-command/metadata.json: Unknown command "DOES_NOT_EXIST" for resource "RMLMapper"
+[2023-03-02 09:00:28,183] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/test-incomplete-data/metadata.json: JSON schema violation
+[2023-03-02 09:00:28,184] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/test-missing-parameter/metadata.json: Missing required parameter "output_file" for command "execute_mapping" of resource "RMLMapper"
+[2023-03-02 09:00:28,184] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/test-missing-resource/metadata.json: Unknown resource "DOES_NOT_EXIST"
+[2023-03-02 09:00:28,185] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/test-no-steps/metadata.json: JSON schema violation
+[2023-03-02 09:01:38,786] INFO     Logger (INFO) initialized for bench_executor.executor
+[2023-03-02 09:01:38,821] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/test-error-command/metadata.json: Unknown command "DOES_NOT_EXIST" for resource "RMLMapper"
+[2023-03-02 09:01:38,823] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/test-incomplete-data/metadata.json: JSON schema violation
+[2023-03-02 09:01:38,824] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/test-missing-parameter/metadata.json: Missing required parameter "output_file" for command "execute_mapping" of resource "RMLMapper"
+[2023-03-02 09:01:38,825] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/test-missing-resource/metadata.json: Unknown resource "DOES_NOT_EXIST"
+[2023-03-02 09:01:38,827] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/test-no-steps/metadata.json: JSON schema violation
+[2023-03-02 09:01:38,827] INFO     Logger (DEBUG) initialized for bench_executor.executor
+[2023-03-02 09:01:38,839] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/test-error-command/metadata.json: Unknown command "DOES_NOT_EXIST" for resource "RMLMapper"
+[2023-03-02 09:01:38,840] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/test-incomplete-data/metadata.json: JSON schema violation
+[2023-03-02 09:01:38,841] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/test-missing-parameter/metadata.json: Missing required parameter "output_file" for command "execute_mapping" of resource "RMLMapper"
+[2023-03-02 09:01:38,842] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/test-missing-resource/metadata.json: Unknown resource "DOES_NOT_EXIST"
+[2023-03-02 09:01:38,843] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/test-no-steps/metadata.json: JSON schema violation
+[2023-03-02 09:01:49,906] DEBUG    Resource Virtuoso initialized
+[2023-03-02 09:01:53,096] DEBUG    Command "execute_mapping" executed on resource RMLMapper
+[2023-03-02 09:02:02,286] DEBUG    Resource Virtuoso ready
+[2023-03-02 09:02:03,001] DEBUG    Command "load" executed on resource Virtuoso
+[2023-03-02 09:02:03,022] DEBUG    Command "execute_and_save" executed on resource Query
+[2023-03-02 09:02:05,553] DEBUG    Cleaned up all resource
+[2023-03-02 09:02:05,553] DEBUG    Writing checkpoint...
+[2023-03-02 09:02:05,553] DEBUG    Copied logs to run results path
+[2023-03-02 09:02:05,553] DEBUG    Copied metric measurements to run results path
+[2023-03-02 09:02:05,553] DEBUG    Copying generated files for run
+[2023-03-02 09:02:05,554] DEBUG    Writing run checkpoint...
+[2023-03-02 09:02:05,554] DEBUG    Cooling down for 15s
+[2023-03-02 09:02:31,713] DEBUG    Resource Virtuoso initialized
+[2023-03-02 09:02:34,815] DEBUG    Command "execute_mapping" executed on resource RMLMapper
+[2023-03-02 09:02:42,038] DEBUG    Resource Virtuoso ready
+[2023-03-02 09:02:42,864] DEBUG    Command "load" executed on resource Virtuoso
+[2023-03-02 09:02:42,895] DEBUG    Command "execute_and_save" executed on resource Query
+[2023-03-02 09:02:45,749] DEBUG    Cleaned up all resource
+[2023-03-02 09:02:45,749] DEBUG    Writing checkpoint...
+[2023-03-02 09:02:45,749] DEBUG    Copied logs to run results path
+[2023-03-02 09:02:45,749] DEBUG    Copied metric measurements to run results path
+[2023-03-02 09:02:45,749] DEBUG    Copying generated files for run
+[2023-03-02 09:02:45,750] DEBUG    Writing run checkpoint...
+[2023-03-02 09:02:45,750] DEBUG    Cooling down for 15s
+[2023-03-02 09:03:06,463] DEBUG    Resource MySQL initialized
+[2023-03-02 09:03:17,605] DEBUG    Resource Virtuoso initialized
+[2023-03-02 09:03:21,040] DEBUG    Resource MySQL ready
+[2023-03-02 09:03:21,097] DEBUG    Command "load" executed on resource MySQL
+[2023-03-02 09:03:24,392] DEBUG    Command "execute_mapping" executed on resource RMLMapper
+[2023-03-02 09:03:33,788] DEBUG    Resource Virtuoso ready
+[2023-03-02 09:03:34,542] DEBUG    Command "load" executed on resource Virtuoso
+[2023-03-02 09:03:34,569] DEBUG    Command "execute_and_save" executed on resource Query
+[2023-03-02 09:03:39,271] DEBUG    Cleaned up all resource
+[2023-03-02 09:03:39,271] DEBUG    Writing checkpoint...
+[2023-03-02 09:03:39,272] DEBUG    Copied logs to run results path
+[2023-03-02 09:03:39,272] DEBUG    Copied metric measurements to run results path
+[2023-03-02 09:03:39,272] DEBUG    Copying generated files for run
+[2023-03-02 09:03:39,272] DEBUG    Writing run checkpoint...
+[2023-03-02 09:03:39,272] DEBUG    Cooling down for 15s
+[2023-03-02 09:04:05,522] DEBUG    Resource Virtuoso initialized
+[2023-03-02 09:04:08,851] DEBUG    Command "execute_mapping" executed on resource RMLMapper
+[2023-03-02 09:04:18,036] DEBUG    Resource Virtuoso ready
+[2023-03-02 09:04:18,736] DEBUG    Command "load" executed on resource Virtuoso
+[2023-03-02 09:04:18,754] DEBUG    Command "execute_and_save" executed on resource Query
+[2023-03-02 09:04:21,269] DEBUG    Cleaned up all resource
+[2023-03-02 09:04:21,269] DEBUG    Writing checkpoint...
+[2023-03-02 09:04:21,269] DEBUG    Copied logs to run results path
+[2023-03-02 09:04:21,269] DEBUG    Copied metric measurements to run results path
+[2023-03-02 09:04:21,269] DEBUG    Copying generated files for run
+[2023-03-02 09:04:21,270] DEBUG    Writing run checkpoint...
+[2023-03-02 09:04:21,270] DEBUG    Cooling down for 15s
+[2023-03-02 09:07:00,314] INFO     Logger (INFO) initialized for bench_executor.executor
+[2023-03-02 09:07:00,358] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/test-error-command/metadata.json: Unknown command "DOES_NOT_EXIST" for resource "RMLMapper"
+[2023-03-02 09:07:00,359] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/test-incomplete-data/metadata.json: JSON schema violation
+[2023-03-02 09:07:00,360] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/test-missing-parameter/metadata.json: Missing required parameter "output_file" for command "execute_mapping" of resource "RMLMapper"
+[2023-03-02 09:07:00,361] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/test-missing-resource/metadata.json: Unknown resource "DOES_NOT_EXIST"
+[2023-03-02 09:07:00,362] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/test-no-steps/metadata.json: JSON schema violation
+[2023-03-02 09:07:00,362] INFO     Logger (DEBUG) initialized for bench_executor.executor
+[2023-03-02 09:07:00,372] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/test-error-command/metadata.json: Unknown command "DOES_NOT_EXIST" for resource "RMLMapper"
+[2023-03-02 09:07:00,373] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/test-incomplete-data/metadata.json: JSON schema violation
+[2023-03-02 09:07:00,374] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/test-missing-parameter/metadata.json: Missing required parameter "output_file" for command "execute_mapping" of resource "RMLMapper"
+[2023-03-02 09:07:00,374] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/test-missing-resource/metadata.json: Unknown resource "DOES_NOT_EXIST"
+[2023-03-02 09:07:00,375] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/test-no-steps/metadata.json: JSON schema violation
+[2023-03-02 09:07:09,171] DEBUG    Resource Virtuoso initialized
+[2023-03-02 09:07:12,432] DEBUG    Command "execute_mapping" executed on resource RMLMapper
+[2023-03-02 09:07:21,537] DEBUG    Resource Virtuoso ready
+[2023-03-02 09:07:22,335] DEBUG    Command "load" executed on resource Virtuoso
+[2023-03-02 09:07:22,377] DEBUG    Command "execute_and_save" executed on resource Query
+[2023-03-02 09:07:25,195] DEBUG    Cleaned up all resource
+[2023-03-02 09:07:25,195] DEBUG    Writing checkpoint...
+[2023-03-02 09:07:25,202] DEBUG    Copied logs to run results path
+[2023-03-02 09:07:25,203] DEBUG    Copied metric measurements to run results path
+[2023-03-02 09:07:25,203] DEBUG    Copying generated files for run
+[2023-03-02 09:07:25,203] DEBUG    Writing run checkpoint...
+[2023-03-02 09:07:25,203] DEBUG    Cooling down for 15s
+[2023-03-02 09:07:51,636] DEBUG    Resource Virtuoso initialized
+[2023-03-02 09:07:55,178] DEBUG    Command "execute_mapping" executed on resource RMLMapper
+[2023-03-02 09:08:04,788] DEBUG    Resource Virtuoso ready
+[2023-03-02 09:08:05,474] DEBUG    Command "load" executed on resource Virtuoso
+[2023-03-02 09:08:05,502] DEBUG    Command "execute_and_save" executed on resource Query
+[2023-03-02 09:08:08,290] DEBUG    Cleaned up all resource
+[2023-03-02 09:08:08,290] DEBUG    Writing checkpoint...
+[2023-03-02 09:08:08,290] DEBUG    Copied logs to run results path
+[2023-03-02 09:08:08,290] DEBUG    Copied metric measurements to run results path
+[2023-03-02 09:08:08,290] DEBUG    Copying generated files for run
+[2023-03-02 09:08:08,291] DEBUG    Writing run checkpoint...
+[2023-03-02 09:08:08,291] DEBUG    Cooling down for 15s
+[2023-03-02 09:08:28,467] DEBUG    Resource MySQL initialized
+[2023-03-02 09:08:39,591] DEBUG    Resource Virtuoso initialized
+[2023-03-02 09:08:43,040] DEBUG    Resource MySQL ready
+[2023-03-02 09:08:43,107] DEBUG    Command "load" executed on resource MySQL
+[2023-03-02 09:08:46,534] DEBUG    Command "execute_mapping" executed on resource RMLMapper
+[2023-03-02 09:08:54,039] DEBUG    Resource Virtuoso ready
+[2023-03-02 09:08:54,751] DEBUG    Command "load" executed on resource Virtuoso
+[2023-03-02 09:08:54,797] DEBUG    Command "execute_and_save" executed on resource Query
+[2023-03-02 09:08:59,734] DEBUG    Cleaned up all resource
+[2023-03-02 09:08:59,734] DEBUG    Writing checkpoint...
+[2023-03-02 09:08:59,735] DEBUG    Copied logs to run results path
+[2023-03-02 09:08:59,735] DEBUG    Copied metric measurements to run results path
+[2023-03-02 09:08:59,735] DEBUG    Copying generated files for run
+[2023-03-02 09:08:59,735] DEBUG    Writing run checkpoint...
+[2023-03-02 09:08:59,735] DEBUG    Cooling down for 15s
+[2023-03-02 09:09:24,026] DEBUG    Resource Virtuoso initialized
+[2023-03-02 09:09:27,415] DEBUG    Command "execute_mapping" executed on resource RMLMapper
+[2023-03-02 09:09:37,286] DEBUG    Resource Virtuoso ready
+[2023-03-02 09:09:38,000] DEBUG    Command "load" executed on resource Virtuoso
+[2023-03-02 09:09:38,022] DEBUG    Command "execute_and_save" executed on resource Query
+[2023-03-02 09:09:40,619] DEBUG    Cleaned up all resource
+[2023-03-02 09:09:40,619] DEBUG    Writing checkpoint...
+[2023-03-02 09:09:40,620] DEBUG    Copied logs to run results path
+[2023-03-02 09:09:40,620] DEBUG    Copied metric measurements to run results path
+[2023-03-02 09:09:40,620] DEBUG    Copying generated files for run
+[2023-03-02 09:09:40,620] DEBUG    Writing run checkpoint...
+[2023-03-02 09:09:40,620] DEBUG    Cooling down for 15s

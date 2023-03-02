@@ -1,0 +1,5 @@
+@prefix foaf:	<http://xmlns.com/foaf/0.1/> .
+@prefix ns1:	<http://example.com/> .
+ns1:Jekfe	foaf:name	"Jekfe" .
+ns1:Jos	foaf:name	"Jos" .
+ns1:Maria	foaf:name	"Maria" .

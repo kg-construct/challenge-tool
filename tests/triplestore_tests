@@ -10,7 +10,6 @@ from glob import glob
 sys.path.append('../')
 from bench_executor.container import ContainerManager  # noqa: E402
 from bench_executor.virtuoso import Virtuoso  # noqa: E402
-from bench_executor.fuseki import Fuseki  # noqa: E402
 from bench_executor.query import Query  # noqa: E402
 
 LOG_DIR = os.path.join(os.path.dirname(__file__), '..', 'bench_executor',
@@ -103,46 +102,6 @@ class TriplestoreTests(unittest.TestCase):
         self.assertEqual(len(results), 3, str(results))
 
         virtuoso.stop()
-
-    def test_fuseki(self):
-        QUERY = 'PREFIX foaf: <http://xmlns.com/foaf/0.1/> ' + \
-                'CONSTRUCT WHERE { ?s foaf:name ?o1 . }'
-        fuseki = Fuseki(DATA_DIR, CONFIG_DIR, LOG_DIR, False)
-        self.assertTrue(fuseki.initialization())
-        self.assertTrue(fuseki.wait_until_ready())
-
-        # Load RDF
-        self.assertTrue(fuseki.load('student.nt'))
-
-        # Verify loaded data
-        q = Query(DATA_DIR, CONFIG_DIR, LOG_DIR, False)
-        results = q._execute(QUERY, fuseki.endpoint, False,
-                             fuseki.headers['ntriples'])
-        results = list(filter(None, results.split('\n')))
-        self.assertEqual(len(results), 3, str(results))
-
-        fuseki.stop()
-
-        # Verify removed data
-        fuseki = Fuseki(DATA_DIR, CONFIG_DIR, LOG_DIR, False)
-        self.assertTrue(fuseki.wait_until_ready())
-
-        q = Query(DATA_DIR, CONFIG_DIR, LOG_DIR, False)
-        results = q._execute(QUERY, fuseki.endpoint, True,
-                             fuseki.headers['ntriples'])
-        self.assertIsNone(results, str(results))
-
-        # Test if we can now reload our RDF
-        self.assertTrue(fuseki.load('student.nt'))
-
-        # Verify loaded data
-        q = Query(DATA_DIR, CONFIG_DIR, LOG_DIR, False)
-        results = q._execute(QUERY, fuseki.endpoint, False,
-                             fuseki.headers['ntriples'])
-        results = list(filter(None, results.split('\n')))
-        self.assertEqual(len(results), 3, str(results))
-
-        fuseki.stop()
 
     def test_query_execute(self):
         QUERY = 'CONSTRUCT WHERE { ?s ?p ?o. } LIMIT 100'

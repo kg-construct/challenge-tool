@@ -10,8 +10,6 @@ from glob import glob
 from rdflib import Graph
 sys.path.append('../')
 from bench_executor.rmlmapper import RMLMapper  # noqa: E402
-from bench_executor.morphkgc import MorphKGC  # noqa: E402
-from bench_executor.sdmrdfizer import SDMRDFizer  # noqa: E402
 from bench_executor.container import ContainerManager  # noqa: E402
 
 LOG_DIR = os.path.join(os.path.dirname(__file__), '..', 'bench_executor',
@@ -95,114 +93,6 @@ class FileTests(unittest.TestCase):
                 format='ntriples')
         self.assertEqual(len(g), 3)
         rmlmapper.stop()
-
-    def test_morphkgc_csv(self):
-        morphkgc = MorphKGC(DATA_DIR, CONFIG_DIR, LOG_DIR, False)
-        try:
-            os.remove(os.path.join(DATA_DIR, 'morphkgc', 'shared',
-                                   'morphkgc_csv.nt'))
-        except FileNotFoundError:
-            pass
-        self.assertTrue(morphkgc.execute_mapping('mapping.rml.ttl',
-                                                 'morphkgc_csv.nt',
-                                                 'ntriples'))
-        self.assertTrue(os.path.exists(os.path.join(DATA_DIR, 'shared',
-                                                    'morphkgc_csv.nt')))
-        g = Graph()
-        g.parse(os.path.join(DATA_DIR, 'shared', 'morphkgc_csv.nt'),
-                format='ntriples')
-        self.assertEqual(len(g), 3)
-        morphkgc.stop()
-
-    def test_morphkgc_json(self):
-        morphkgc = MorphKGC(DATA_DIR, CONFIG_DIR, LOG_DIR, False)
-        try:
-            os.remove(os.path.join(DATA_DIR, 'morphkgc', 'shared',
-                                   'morphkgc_json.nt'))
-        except FileNotFoundError:
-            pass
-        self.assertTrue(morphkgc.execute_mapping('mapping_json.rml.ttl',
-                                                 'morphkgc_json.nt',
-                                                 'ntriples'))
-        self.assertTrue(os.path.exists(os.path.join(DATA_DIR, 'shared',
-                                                    'morphkgc_json.nt')))
-        g = Graph()
-        g.parse(os.path.join(DATA_DIR, 'shared', 'morphkgc_json.nt'),
-                format='ntriples')
-        self.assertEqual(len(g), 3)
-        morphkgc.stop()
-
-    def test_morphkgc_xml(self):
-        morphkgc = MorphKGC(DATA_DIR, CONFIG_DIR, LOG_DIR, False)
-        try:
-            os.remove(os.path.join(DATA_DIR, 'morphkgc', 'shared',
-                                   'morphkgc_xml.nt'))
-        except FileNotFoundError:
-            pass
-        self.assertTrue(morphkgc.execute_mapping('mapping_xml.rml.ttl',
-                                                 'morphkgc_xml.nt',
-                                                 'ntriples'))
-        self.assertTrue(os.path.exists(os.path.join(DATA_DIR, 'shared',
-                                                    'morphkgc_xml.nt')))
-        g = Graph()
-        g.parse(os.path.join(DATA_DIR, 'shared', 'morphkgc_xml.nt'),
-                format='ntriples')
-        self.assertEqual(len(g), 3)
-        morphkgc.stop()
-
-    @unittest.skip('Container unavailable')
-    def test_sdmrdfizer_csv(self):
-        sdmrdfizer = SDMRDFizer(DATA_DIR, CONFIG_DIR, LOG_DIR, False)
-        try:
-            os.remove(os.path.join(DATA_DIR, 'shared', 'sdmrdfizer_csv.nt'))
-        except FileNotFoundError:
-            pass
-        self.assertTrue(sdmrdfizer.execute_mapping('mapping.rml.ttl',
-                                                   'sdmrdfizer_csv.nt',
-                                                   'ntriples'))
-        self.assertTrue(os.path.exists(os.path.join(DATA_DIR, 'shared',
-                                                    'sdmrdfizer_csv.nt')))
-        g = Graph()
-        g.parse(os.path.join(DATA_DIR, 'shared', 'sdmrdfizer_csv.nt'),
-                format='ntriples')
-        self.assertEqual(len(g), 3)
-        sdmrdfizer.stop()
-
-    @unittest.skip('Container unavailable')
-    def test_sdmrdfizer_json(self):
-        sdmrdfizer = SDMRDFizer(DATA_DIR, CONFIG_DIR, LOG_DIR, False)
-        try:
-            os.remove(os.path.join(DATA_DIR, 'shared', 'sdmrdfizer_json.nt'))
-        except FileNotFoundError:
-            pass
-        self.assertTrue(sdmrdfizer.execute_mapping('mapping_json.rml.ttl',
-                                                   'sdmrdfizer_json.nt',
-                                                   'ntriples'))
-        self.assertTrue(os.path.exists(os.path.join(DATA_DIR, 'shared',
-                                                    'sdmrdfizer_json.nt')))
-        g = Graph()
-        g.parse(os.path.join(DATA_DIR, 'shared', 'sdmrdfizer_json.nt'),
-                format='ntriples')
-        self.assertEqual(len(g), 3)
-        sdmrdfizer.stop()
-
-    @unittest.skip('Container unavailable')
-    def test_sdmrdfizer_xml(self):
-        sdmrdfizer = SDMRDFizer(DATA_DIR, CONFIG_DIR, LOG_DIR, False)
-        try:
-            os.remove(os.path.join(DATA_DIR, 'shared', 'sdmrdfizer_xml.nt'))
-        except FileNotFoundError:
-            pass
-        self.assertTrue(sdmrdfizer.execute_mapping('mapping_xml.rml.ttl',
-                                                   'sdmrdfizer_xml.nt',
-                                                   'ntriples'))
-        self.assertTrue(os.path.exists(os.path.join(DATA_DIR, 'shared',
-                                                    'sdmrdfizer_xml.nt')))
-        g = Graph()
-        g.parse(os.path.join(DATA_DIR, 'shared', 'sdmrdfizer_xml.nt'),
-                format='ntriples')
-        self.assertEqual(len(g), 3)
-        sdmrdfizer.stop()
 
 
 if __name__ == '__main__':

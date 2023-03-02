@@ -1,6 +1,6 @@
 ===> CASE <===
-Timestamp: 2023-03-02T07:56:21.542222
-Directory: /home/dylan/Projects/challenge-tool/tests/./../bench_executor/log
+Timestamp: 2023-03-02T08:08:39.630334
+Directory: /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/rmlmapper/virtuoso/transform-mysql-to-ntriples
 Run: 1
 Number of steps: 4
 

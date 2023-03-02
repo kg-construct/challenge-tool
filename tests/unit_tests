@@ -15,9 +15,7 @@ from csv import DictReader
 sys.path.append('../')
 from bench_executor.logger import Logger  # noqa: E402
 from bench_executor.container import Container, ContainerManager  # noqa: E402
-from bench_executor.postgresql import PostgreSQL  # noqa: E402
 from bench_executor.mysql import MySQL  # noqa: E402
-from bench_executor.yarrrml import YARRRML  # noqa: E402
 from bench_executor.collector import Collector, METRICS_FILE_NAME  # noqa: E402
 from bench_executor.stats import Stats, METRICS_AGGREGATED_FILE_NAME, \
         METRICS_SUMMARY_FILE_NAME  # noqa: E402
@@ -79,88 +77,6 @@ class UnitTests(unittest.TestCase):
                       logger, {'80/tcp': '8082/tcp'})
         self.assertTrue(c.run_and_wait_for_exit('sleep 5'))
         c.stop()
-
-    def test_postgresql(self):
-        postgresql = PostgreSQL(DATA_DIR, CONFIG_DIR, LOG_DIR, False)
-        self.assertTrue(postgresql.initialization())
-        self.assertTrue(postgresql.wait_until_ready())
-        connection = psycopg2.connect(host='localhost', database='db',
-                                      user='root', password='root')
-        cursor = connection.cursor()
-
-        # Test valid query
-        cursor.execute('SELECT 1;')
-
-        # Test load CSV
-        self.assertTrue(postgresql.load('student.csv', 'student'))
-        cursor.execute('SELECT name, age FROM student;')
-        results = []
-        for record in cursor:
-            results.append([record[0], record[1]])
-        expected = [['Jefke', '21'],
-                    ['Maria', '22'],
-                    ['Jos', '23'],
-                    [None, None]]
-        self.assertListEqual(results, expected)
-
-        # Test invalid query
-        with self.assertRaises(psycopg2.errors.UndefinedTable):
-            cursor.execute('SELECT * FROM INVALID_TABLE;')
-        connection.rollback()
-
-        connection.close()
-        postgresql.stop()
-
-        # Check if the tables are really dropped
-        postgresql = PostgreSQL(DATA_DIR, CONFIG_DIR, LOG_DIR, False)
-        self.assertTrue(postgresql.wait_until_ready())
-        connection = psycopg2.connect(host='localhost', user='root',
-                                      password='root', database='db')
-        cursor = connection.cursor()
-        with self.assertRaises(psycopg2.errors.UndefinedTable):
-            cursor.execute('SELECT name, age FROM student;')
-        connection.rollback()
-
-        # Check if we can now reload
-        self.assertTrue(postgresql.load('student.csv', 'student'))
-        cursor.execute('SELECT name, age FROM student;')
-        results = []
-        for record in cursor:
-            results.append([record[0], record[1]])
-        expected = [['Jefke', '21'],
-                    ['Maria', '22'],
-                    ['Jos', '23'],
-                    [None, None]]
-        self.assertListEqual(results, expected)
-
-        # Check SQL schema loading with 2 tables
-        CSV_FILES = [('student.csv', 'student1'), ('student.csv', 'student2')]
-        self.assertTrue(postgresql.load_sql_schema('schema_postgresql.sql',
-                                                   CSV_FILES))
-        # Verify table 1
-        cursor.execute('SELECT name, age FROM student1;')
-        results = []
-        for record in cursor:
-            results.append([record[0], record[1]])
-        expected = [['Jefke', '21'],
-                    ['Maria', '22'],
-                    ['Jos', '23'],
-                    [None, None]]
-        self.assertListEqual(results, expected)
-
-        # Verify table 2
-        cursor.execute('SELECT name, age FROM student2;')
-        results = []
-        for record in cursor:
-            results.append([record[0], record[1]])
-        expected = [['Jefke', '21'],
-                    ['Maria', '22'],
-                    ['Jos', '23'],
-                    [None, None]]
-        self.assertListEqual(results, expected)
-
-        connection.close()
-        postgresql.stop()
 
     def test_mysql(self):
         mysql = MySQL(DATA_DIR, CONFIG_DIR, LOG_DIR, False)
@@ -248,26 +164,6 @@ class UnitTests(unittest.TestCase):
 
         connection.close()
         mysql.stop()
-
-    def test_yarrrml_rml(self):
-        yarrrml = YARRRML(DATA_DIR, CONFIG_DIR, LOG_DIR, False)
-        yarrrml_file = 'mapping.yarrrml'
-
-        # YARRRML to RML
-        mapping_file = 'mapping_yarrrml.rml.ttl'
-        self.assertTrue(yarrrml.transform_mapping(yarrrml_file, mapping_file,
-                                                  False))
-        yarrrml.stop()
-
-    def test_yarrrml_r2rml(self):
-        yarrrml = YARRRML(DATA_DIR, CONFIG_DIR, LOG_DIR, False)
-        yarrrml_file = 'mapping.yarrrml'
-
-        # YARRRML to R2RML
-        mapping_file = 'mapping_yarrrml.r2rml.ttl'
-        self.assertTrue(yarrrml.transform_mapping(yarrrml_file, mapping_file,
-                                                  True))
-        yarrrml.stop()
 
     def test_collector_metrics(self):
         NUMBER_OF_STEPS = 4
