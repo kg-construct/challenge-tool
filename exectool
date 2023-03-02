@@ -24,9 +24,10 @@ EXIT_CODE_SELINUX = -5
 EXIT_CODE_EVEN_RUNS = -6
 EXIT_CODE_INTERRUPTED = -7
 EXIT_CODE_DOWNLOAD_FAILURE = -8
-KGC_CHALLENGE_URL = 'https://zenodo.org/record/7509997/files/geosapi-0.6-5.tar.gz?download=1'  # noqa: E501
+KGC_CHALLENGE_URL = 'https://zenodo.org/record/7689310/files/challenge.tar.gz?download=1'  # noqa: E501
 KGC_CHALLENGE_FILE_NAME = 'eswc-kgc-challenge-2023.tar.gz'
 DOWNLOAD_DIR = 'downloads'
+CHUNK_SIZE = 8192
 
 stop = False
 wait_for_user = False
@@ -317,17 +318,27 @@ def download_challenge():
             if 'content-length' in r.headers:
                 total_length = int(r.headers['content-length'])
                 print(f'ℹ️  Downloading challenge from {KGC_CHALLENGE_URL} '
-                      f'({round(total_length / 10**6, 2)} MB), '
+                      f'({round(total_length/10**6, 2):.2f} MB), '
                       'this can take some time...')
             else:
                 print(f'ℹ️  Downloading challenge from {KGC_CHALLENGE_URL}, '
                       'this can take some time...')
 
+            downloaded_length: int = 0
             with open(archive_path, 'wb') as f:
-                for chunk in r.iter_content():
+                for chunk in r.iter_content(CHUNK_SIZE):
+                    downloaded_length += CHUNK_SIZE
+                    if 'content-length' in r.headers:
+                        print(f'ℹ️  {round(downloaded_length/10**6, 2):.2f}'
+                              f'/{round(total_length / 10**6, 2):.2f} MB',
+                              end='\r')
+                    else:
+                        print(f'ℹ️  {round(downloaded_length/10**6, 2):.2f}'
+                              'MB', end='\r')
+
                     f.write(chunk)
         else:
-            print('❌ Download KGC 2023 challenge failed'
+            print('❌ Download KGC 2023 challenge failed '
                   f'(HTTP {r.status_code})', file=sys.stderr)
             sys.exit(EXIT_CODE_DOWNLOAD_FAILURE)
 
