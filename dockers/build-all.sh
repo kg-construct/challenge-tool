@@ -16,16 +16,16 @@ RMLMAPPER_BUILD='363'
 echo "*** Building MySQL $MYSQL_VERSION ... ***"
 cd MySQL
 docker build --build-arg MYSQL_VERSION=$MYSQL_VERSION \
-    -t blindreviewing/mysql:v$MYSQL_VERSION .
-docker push blindreviewing/mysql:v$MYSQL_VERSION
+    -t kgconstruct/mysql:v$MYSQL_VERSION .
+docker push kgconstruct/mysql:v$MYSQL_VERSION
 cd ..
 
 # Virtuoso
 echo "*** Building Virtuoso $VIRTUOSO_VERSION ... ***"
 cd Virtuoso
 docker build --build-arg VIRTUOSO_VERSION=$VIRTUOSO_VERSION \
-    -t blindreviewing/virtuoso:v$VIRTUOSO_VERSION .
-docker push blindreviewing/virtuoso:v$VIRTUOSO_VERSION
+    -t kgconstruct/virtuoso:v$VIRTUOSO_VERSION .
+docker push kgconstruct/virtuoso:v$VIRTUOSO_VERSION
 cd ..
 
 # RMLMapper
@@ -33,6 +33,6 @@ echo "*** Building RMLMapper $RMLMAPPER_VERSION r$RMLMAPPER_BUILD ... ***"
 cd RMLMapper
 docker build --build-arg RMLMAPPER_VERSION=$RMLMAPPER_VERSION \
     --build-arg RMLMAPPER_BUILD=$RMLMAPPER_BUILD \
-    -t blindreviewing/rmlmapper:v$RMLMAPPER_VERSION .
-docker push blindreviewing/rmlmapper:v$RMLMAPPER_VERSION
+    -t kgconstruct/rmlmapper:v$RMLMAPPER_VERSION .
+docker push kgconstruct/rmlmapper:v$RMLMAPPER_VERSION
 cd ..

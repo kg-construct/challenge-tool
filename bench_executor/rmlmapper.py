@@ -43,7 +43,7 @@ class RMLMapper(Container):
         self._verbose = verbose
 
         os.makedirs(os.path.join(self._data_path, 'rmlmapper'), exist_ok=True)
-        super().__init__(f'blindreviewing/rmlmapper:v{VERSION}', 'RMLMapper',
+        super().__init__(f'kgconstruct/rmlmapper:v{VERSION}', 'RMLMapper',
                          self._logger,
                          volumes=[f'{self._data_path}/rmlmapper:/data',
                                   f'{self._data_path}/shared:/data/shared'])
