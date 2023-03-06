@@ -62,6 +62,81 @@ looks as followed:
 Through the CLI `--root` parameter you can specify where the tool starts looking
 for parts to execute.
 
+If you want to have a list of all possible parts in the challenge, you can
+use the `list` command:
+
+```
+./exectool list --root=downloads/eswc-kgc-challenge-2023/
+```
+
+This outputs the following:
+
+```
+Discovering 63 cases:
+   1. RMLMapper: MySQL RDB: join 5-5 75percent                                              [ 2 steps ]
+   2. RMLMapper: MySQL RDB: join 10-5 75percent                                             [ 2 steps ]
+   3. RMLMapper: MySQL RDB: join 5-10 25percent                                             [ 2 steps ]
+   4. RMLMapper: MySQL RDB: join 5-10 50percent                                             [ 2 steps ]
+   5. RMLMapper: MySQL RDB: join 5-10 100percent                                            [ 2 steps ]
+   6. RMLMapper: MySQL RDB: join 5-10 75percent                                             [ 2 steps ]
+   7. RMLMapper: MySQL RDB: join 10-5 100percent                                            [ 2 steps ]
+   8. RMLMapper: MySQL RDB: join 10-5 25percent                                             [ 2 steps ]
+   9. RMLMapper: MySQL RDB: join 5-5 25percent                                              [ 2 steps ]
+  10. RMLMapper: MySQL RDB: join 5-5 100percent                                             [ 2 steps ]
+  11. RMLMapper: MySQL RDB: join 10-5 50percent                                             [ 2 steps ]
+  12. RMLMapper: MySQL RDB: join 5-5 50percent                                              [ 2 steps ]
+  13. RMLMapper: MySQL RDB: join 10-1 100percent                                            [ 2 steps ]
+  14. RMLMapper: MySQL RDB: join 10-1 0percent                                              [ 2 steps ]
+  15. RMLMapper: MySQL RDB: join 5-1 50percent                                              [ 2 steps ]
+  16. RMLMapper: MySQL RDB: join 20-1 50percent                                             [ 2 steps ]
+  17. RMLMapper: MySQL RDB: join 10-1 50percent                                             [ 2 steps ]
+  18. RMLMapper: MySQL RDB: join 10-1 75percent                                             [ 2 steps ]
+  19. RMLMapper: MySQL RDB: join 15-1 50percent                                             [ 2 steps ]
+  20. RMLMapper: MySQL RDB: join 10-1 25percent                                             [ 2 steps ]
+  21. RMLMapper: MySQL RDB: join 1-1 100percent                                             [ 2 steps ]
+  22. RMLMapper: MySQL RDB: join 1-1 25percent                                              [ 2 steps ]
+  23. RMLMapper: MySQL RDB: join 1-1 50percent                                              [ 2 steps ]
+  24. RMLMapper: MySQL RDB: join 1-1 0percent                                               [ 2 steps ]
+  25. RMLMapper: MySQL RDB: join 1-1 75percent                                              [ 2 steps ]
+  26. RMLMapper: MySQL RDB: join 1-10 50percent                                             [ 2 steps ]
+  27. RMLMapper: MySQL RDB: join 1-10 0percent                                              [ 2 steps ]
+  28. RMLMapper: MySQL RDB: join 1-15 50percent                                             [ 2 steps ]
+  29. RMLMapper: MySQL RDB: join 1-5 50percent                                              [ 2 steps ]
+  30. RMLMapper: MySQL RDB: join 1-10 25percent                                             [ 2 steps ]
+  31. RMLMapper: MySQL RDB: join 1-10 100percent                                            [ 2 steps ]
+  32. RMLMapper: MySQL RDB: join 1-10 75percent                                             [ 2 steps ]
+  33. RMLMapper: MySQL RDB: join 1-20 50percent                                             [ 2 steps ]
+  34. RMLMapper: MySQL RDB: 10K rows 20 columns                                             [ 2 steps ]
+  35. RMLMapper: MySQL RDB: 1M rows 20 columns                                              [ 2 steps ]
+  36. RMLMapper: MySQL RDB: 100K rows 20 columns                                            [ 2 steps ]
+  37. RMLMapper: MySQL RDB: 10M rows 20 columns                                             [ 2 steps ]
+  38. RMLMapper: Virtuoso: MySQL RDB: scale 100                                             [ 21 steps ]
+  39. RMLMapper: Virtuoso: heterogeneity nested                                             [ 20 steps ]
+  40. RMLMapper: Virtuoso: MySQL RDB: heterogeneity mixed                                   [ 21 steps ]
+  41. RMLMapper: Virtuoso: MySQL RDB: scale 10                                              [ 21 steps ]
+  42. RMLMapper: Virtuoso: MySQL RDB: heterogeneity tabular                                 [ 21 steps ]
+  43. RMLMapper: Virtuoso: MySQL RDB: scale 1                                               [ 21 steps ]
+  44. RMLMapper: Virtuoso: MySQL RDB: scale 1000                                            [ 21 steps ]
+  45. RMLMapper: Virtuoso: heterogeneity files                                              [ 20 steps ]
+  46. RMLMapper: MySQL RDB: mapping 15tm 1pom                                               [ 2 steps ]
+  47. RMLMapper: MySQL RDB: mapping 3tm 5pom                                                [ 2 steps ]
+  48. RMLMapper: MySQL RDB: mapping 1tm 15pom                                               [ 2 steps ]
+  49. RMLMapper: MySQL RDB: mapping 5tm 3pom                                                [ 2 steps ]
+  50. RMLMapper: MySQL RDB: 1M rows 10 columns                                              [ 2 steps ]
+  51. RMLMapper: MySQL RDB: 1M rows 20 columns                                              [ 2 steps ]
+  52. RMLMapper: MySQL RDB: 1M rows 30 columns                                              [ 2 steps ]
+  53. RMLMapper: MySQL RDB: 1M rows 1 columns                                               [ 2 steps ]
+  54. RMLMapper: MySQL RDB: empty values 0percent                                           [ 2 steps ]
+  55. RMLMapper: MySQL RDB: empty values 100percent                                         [ 2 steps ]
+  56. RMLMapper: MySQL RDB: empty values 25percent                                          [ 2 steps ]
+  57. RMLMapper: MySQL RDB: empty values 75percent                                          [ 2 steps ]
+  58. RMLMapper: MySQL RDB: empty values 50percent                                          [ 2 steps ]
+  59. RMLMapper: MySQL RDB: duplicates 25percent                                            [ 2 steps ]
+  60. RMLMapper: MySQL RDB: duplicates 100percent                                           [ 2 steps ]
+  61. RMLMapper: MySQL RDB: duplicates 0percent                                             [ 2 steps ]
+  62. RMLMapper: MySQL RDB: duplicates 50percent                                            [ 2 steps ]
+```
+
 ## Tutorial: Adding your own tool
 
 Adding your tool to exectool requires the following parts:
