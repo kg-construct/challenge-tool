@@ -37,9 +37,13 @@ in the exectool repository.
 
 Adding your tool to exectool requires the following parts:
 
-1. Package your tool as a Docker image and publish it on Docker Hub.
-2. Create a Python class for your tool in the `bench_executor` folder.
-3. Add some test cases for your tool, the test data goes in `bench_executor/data/test-cases` and the actual test goes into `tests`.
+1. **Required**: Package your tool as a Docker image and publish it on Docker Hub.
+2. **Required**: Create a Python class for your tool in the `bench_executor` folder.
+3. **Preferred**: Add some test cases for your tool, the test data goes in `bench_executor/data/test-cases` and the actual test goes into `tests`.
+
+:warning: If possible, **please supply the Docker image and the Python class to
+make sure your experiments are reproducible** with the exact same parameters as
+on your machine.
 
 We will go through these steps for the RMLMapper:
 
@@ -78,7 +82,7 @@ This Dockerfile uses Ubuntu 22.04 LTS as base and installs the dependencies for
 the RMLMapper. After that, it downloads the RMLMapper jar from GitHub, the version
 is made configurable through the `RMLMAPPER_VERSION` and `RMLMAPPER_BUILD` variables.
 The Dockerfile also creates a folder in the root: `/data` which is used to exchange data with the host system.
-This folder is crucial and ever tool must use and expose this path for exchange data!
+:warning: This folder is crucial and ever tool must use and expose this path for exchange data!
 
 Now we can build and publish our Docker image to Docker Hub:
 
@@ -86,8 +90,8 @@ Now we can build and publish our Docker image to Docker Hub:
 # Build RMLMapper 6.0.0
 docker build --build-arg RMLMAPPER_VERSION=6.0.0 --build-arg RMLMAPPER_BUILD=363 -t kgconstruct/rmlmapper:v6.0.0 .
 
-# Publish Docker image under the "kgconstruct" organization
-docker push kgconstruct/rmlmapper:v6.0.0
+# Publish Docker image, replace $USERNAME with your Docker Hub username
+docker push $USERNAME/rmlmapper:v6.0.0
 ```
 
 **Step 2: Create a Python class in the bench_executor folder**
@@ -96,6 +100,47 @@ Each tool has a slightly different interface to execute a [R2]RML mapping,
 some tools can only handle only R2RML or RML mappings,
 or require certain configuration files to operate.
 These differences are abstracted by the Python class for each tool.
+
+Below, an example Python class of the RMLMapper is given, you can copy this and
+adjust it to your tool, you need to adjust it in the following places:
+
+- [ ] **Required**: Name of the class matching with your tool: `class RMLMapper(Container)`
+- [ ] **Required**: Docker image and its pretty name: 
+`super().__init__(f'kgconstruct/rmlmapper:v{VERSION}', 'RMLMapper'`.
+`kgconstruct/rmlmapper:v{VERSION}` is the Docker image name with tag
+and `RMLMapper` is the pretty name.
+- [ ] **Preferred**: The inline code documentation to your tool.
+
+The following parts heavily depend on your tool and how your tool executes mappings.
+Some tools use commandline arguments while others use configuration files:
+
+- [ ] **Required**: The `_execute_with_timeout` method executes your tool with the specified
+timeout (defined by the `TIMEOUT` variable in seconds at the top of the class file).
+Here you can specify arguments that are necessary to ensure a proper execution
+of your tool such as the Java heap (in case of the RMLMapper).
+Some tool won't require such additional arguments and can just leave the method
+empty as followed:
+
+```
+@timeout(TIMEOUT)
+def _execute_with_timeout(self, arguments: list) -> bool:
+    """Execute a mapping with a provided timeout.
+
+    Returns
+    -------
+    success : bool
+        Whether the execution was successfull or not.
+    """
+    return self.run_and_wait_for_exit(cmd)
+```
+
+- [ ] **Required**: The `execute_mapping` method prepares the provided mapping
+and pass it to your tool. Here, you can add tool specific arguments 
+for executing the mapping such as the credentials of a relational database,
+generating the configuration file for your tool, etc.
+For the RMLMapper, we add the necessary commandline arguments here
+to access relational databases such as the username, password, host, port of the
+relational database.
 
 The Python class of the RMLMapper looks like this:
 
