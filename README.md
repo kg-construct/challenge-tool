@@ -7,16 +7,34 @@ EXEC exposes a CLI interface `exectool`.
 
 ## Quick Start KGCW Challenge 2023
 
-1. Follow the [installation instructions](./README.md#installation) to install the tool.
+*This installation guide is tested with Ubuntu 22.04 LTS, but other Linux distributions work as well.*
 
-2. Download the data of the KGCW Challenge 2023 by running the tool as followed:
+:warning: Other OSes are _unsupported_, only Linux is supported currently.
+
+1. Install dependencies
+
+```
+# Ubuntu dependencies, this may differ for your Linux distro
+sudo apt install zlib1g zlib1g-dev libpq-dev libjpeg-dev python3-pip docker.io
+pip install --user -r requirements.txt
+```
+
+2. Configure Docker
+
+```
+# Add user to docker group
+sudo groupadd docker
+sudo usermod -aG docker $USER
+```
+
+3. Download the data of the KGCW Challenge 2023 by running the tool as followed:
 ```
 ./exectool download-challenge-2023
 ```
 This will fetch the data, mappings, and other files from Zenodo and unpack them.
 Make sure you have sufficient disk space left.
 
-3. Execute the example pipeline included in the challenge:
+4. Execute the example pipeline included in the challenge:
 ```
 ./exectool run --runs=5 --root=downloads/eswc-kgc-challenge-2023
 ```
