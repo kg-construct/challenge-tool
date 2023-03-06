@@ -18,7 +18,7 @@ Make sure you have sufficient disk space left.
 
 3. Execute the example pipeline included in the challenge:
 ```
-./exectool run --runs=5 --root=eswc-kgc-challenge-2023
+./exectool run --runs=5 --root=downloads/eswc-kgc-challenge-2023
 ```
 The tool will execute all cases in the
 challenge (`--root=eswc-kgc-challenge-2023`)
@@ -32,6 +32,35 @@ The example pipeline uses the following tools:
 For detailed usage of this tool, please have a look at the 
 [README](https://github.com/kg-construct/exectool/blob/main/README.md)
 in the exectool repository.
+
+## Tutorial: Running a specific part of the Challenge
+
+In case you want to run a specific part of the challenge such as only the joins,
+you can instruct the tool to only execute the joins by specifying the `--root`
+parameter to the directory where the joins are stored.
+
+For example:
+
+```
+./exectool run --runs=5 --root=downloads/eswc-kgc-challenge-2023/joins
+```
+
+The same for other parts, such as `properties`:
+
+```
+./exectool run --runs=5 --root=downloads/eswc-kgc-challenge-2023/properties
+```
+
+If you want to be even more precise and only execute a specific scaling, you
+can specify this as well. For example: `mappings` with scaling `mapping_15tm_1pom`
+looks as followed:
+
+```
+./exectool run --runs=5 --root=downloads/eswc-kgc-challenge-2023/mappings/mapping_15tm_1pom
+```
+
+Through the CLI `--root` parameter you can specify where the tool starts looking
+for parts to execute.
 
 ## Tutorial: Adding your own tool
 
