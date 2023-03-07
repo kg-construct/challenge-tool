@@ -155,6 +155,37 @@ Discovering 63 cases:
   62. RMLMapper: MySQL RDB: duplicates 50percent                                            [ 2 steps ]
 ```
 
+## Tutorial: Where are the results?
+
+During execution, a directory called `results` will be created for each
+item executed. In this directory, each run of the item gets its own 
+directory `run_{$NUMBER}` where the results, metrics, and logs for that run are
+stored:
+
+```
+.
+├── data
+│   └── shared
+├── metadata.json
+└── results
+    └── run_1
+        ├── case-info.txt
+        ├── log.txt
+        ├── metrics.csv
+        └── rmlmapper
+            └── out.nt
+```
+
+Each tool involved in the pipeline specified in `metadata.json` has
+its own directory in the `run_{$NUMBER}` directory. In case of the RMLMapper,
+this is `rmlmapper` and contains the generated Knowledge Graph in RDF N-Triples
+in a file `out.nt` as specified in `metadata.json`. The captured output
+from the Docker containers is available in `log.txt` 
+while the information about your hardware is stored in `case-info.txt`.
+The measured metrics can be found in `metrics.csv` such as CPU usage,
+memory usage, etc. of the whole system on which EXEC executed the pipeline from
+`metadata.json`.
+
 ## Tutorial: Adding your own tool
 
 Adding your tool to exectool requires the following parts:
