@@ -27,6 +27,8 @@ sudo groupadd docker
 sudo usermod -aG docker $USER
 ```
 
+:warning: You have to logout and login again to apply group and user permissions changes on your account.
+
 3. Download the data of the KGCW Challenge 2023 by running the tool as followed:
 ```
 ./exectool download-challenge-2023
