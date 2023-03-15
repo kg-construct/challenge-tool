@@ -49,6 +49,26 @@ The example pipeline uses the following tools:
 - RMLMapper as mapping engine
 - Virtuoso as triple store
 
+:bulb: You can end the execution by pressing `CTRL+C`. Pressing it once will gracefully end the current item by letting it finish and exit.
+Pressing it again will forcefully kill the execution and exit as quickly as possible.
+
+:warning: Executing all items with the example pipeline using the RMLMapper takes a long time. Consider running it on a separate machine.
+
+:bulb: If you want to keep it running while also disconnect from the machine, you can first start a Screen session:
+
+```
+# Start a Screen session with name 'eswc-kgc-challenge-2023'
+screen -S eswc-kgc-challenge-2023
+
+# You enter the session, execute any command you want such as the challenge:
+./exectool run --runs=5 --root=downloads/eswc-kgc-challenge-2023
+
+# Leave the session while letting it run by pressing: 1) CTRL+a  2) CTRL+d
+```
+
+You can re-enter the session by running `screen -r`.
+
+
 For detailed usage of this tool, please have a look at the 
 [README](https://github.com/kg-construct/exectool/blob/main/README.md)
 in the exectool repository.
@@ -58,6 +78,9 @@ in the exectool repository.
 In case you want to run a specific part of the challenge such as only the joins,
 you can instruct the tool to only execute the joins by specifying the `--root`
 parameter to the directory where the joins are stored.
+
+:bulb: You can end the execution by pressing `CTRL+C`. Pressing it once will gracefully end the current item by letting it finish and exit.
+Pressing it again will forcefully kill the execution and exit as quickly as possible.
 
 For example:
 
