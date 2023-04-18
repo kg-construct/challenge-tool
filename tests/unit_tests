@@ -154,8 +154,9 @@ class UnitTests(unittest.TestCase):
         except FileNotFoundError:
             pass
 
-        collector = Collector(results_run_path, SAMPLE_INTERVAL,
-                              NUMBER_OF_STEPS, RUN, LOG_DIR, False)
+        collector = Collector('my-case-name', results_run_path,
+                              SAMPLE_INTERVAL, NUMBER_OF_STEPS, RUN, LOG_DIR,
+                              False)
         sleep(15)
         collector.next_step()
         sleep(20)

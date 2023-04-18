@@ -13,6 +13,7 @@ import psutil
 from typing import Optional
 from timeout_decorator import timeout, TimeoutError  # type: ignore
 from bench_executor.logger import Logger
+from bench_executor.container import Container
 
 VERSION = '6.0.0'
 TIMEOUT = 6 * 3600  # 6 hours

@@ -50,14 +50,14 @@ network.
 import os
 import platform
 import psutil as ps
+from docker import DockerClient  # type: ignore
 from csv import DictWriter
-from datetime import datetime, timezone
 from time import time, sleep
+from datetime import datetime
 from subprocess import run, CalledProcessError
 from threading import Thread, Event
 from typing import TYPE_CHECKING, Dict, Union, Optional, List
 from bench_executor.logger import Logger
-from bench_executor.docker import Docker
 
 # psutil types are platform specific, provide stubs at runtime as checking is
 # not done there
@@ -254,7 +254,7 @@ def _collect_metrics(stop_event: Event, name: str, run: int, metrics_path: str,
 class Collector():
     """Collect metrics samples at a given interval for a run of a case."""
 
-    def __init__(self, case_name: str, results_run_path: str,
+    def __init__(self, name: str, results_run_path: str,
                  sample_interval: float, number_of_steps: int, run_id: int,
                  directory: str, verbose: bool):
         """
@@ -265,7 +265,7 @@ class Collector():
         metrics. The file describes:
 
         - **Case**:
-            - Name of the case.
+            - Name.
             - Timestamp when started.
             - Directory of the case.
             - Number of the run.
@@ -285,8 +285,6 @@ class Collector():
 
         Parameters
         ----------
-        case_name : str
-            Name of the case being executed.
         results_run_path : str
             Path to the results directory of the run currently being executed.
         sample_interval : float
@@ -306,7 +304,6 @@ class Collector():
         self._number_of_steps: int = number_of_steps
         self._stop_event: Event = Event()
         self._logger = Logger(__name__, directory, verbose)
-        self._docker = Docker(self._logger)
 
         # Only Linux is supported
         if platform.system() != 'Linux':
@@ -363,16 +360,16 @@ class Collector():
         network_interfaces = ps.net_if_stats()
 
         # Docker daemon: version, storage driver, cgroupfs
-        success, docker_info = self._docker.info()
-        if not success:
-            self._logger.error('Failed to retrieve Docker daemon information')
+        client = DockerClient()
+        docker_info = client.info()
+        client.close()
 
         # Write machine information to disk
         case_info_file = os.path.join(self._data_path, CASE_INFO_FILE_NAME)
         with open(case_info_file, 'w') as f:
             f.write('===> CASE <===\n')
-            f.write(f'Name: {case_name}\n')
-            f.write(f'Timestamp: {datetime.now(timezone.utc).isoformat()}\n')
+            f.write(f'Name: {name}\n')
+            f.write(f'Timestamp: {datetime.utcnow().isoformat()}\n')
             f.write(f'Directory: {directory}\n')
             f.write(f'Run: {run_id}\n')
             f.write(f'Number of steps: {self._number_of_steps}\n')
@@ -393,29 +390,25 @@ class Collector():
             f.write(f'\tRAM memory: {int(memory_total / 10 ** 6)} MB\n')
             f.write(f'\tSWAP memory: {int(swap_total / 10 ** 6)} MB\n')
             f.write('Storage\n')
-            for disk_name, size in partitions.items():
-                f.write(f'\tDisk "{disk_name}": '
+            for name, size in partitions.items():
+                f.write(f'\tDisk "{name}": '
                         f'{round(size / 10 ** 9, 2)} GB\n')
             f.write('Network\n')
-            for interface_name, stats in network_interfaces.items():
+            for name, stats in network_interfaces.items():
                 speed = stats.speed
                 if speed == 0:
-                    f.write(f'\tInterface "{interface_name}"\n')
+                    f.write(f'\tInterface "{name}"\n')
                 else:
-                    f.write(f'\tInterface "{interface_name}": {speed} mbps\n')
+                    f.write(f'\tInterface "{name}": {speed} mbps\n')
 
             f.write('\n')
             f.write('===> DOCKER <===\n')
-            f.write('Version: '
-                    f'{docker_info.get("ServerVersion", "UNKNOWN")}\n')
-            f.write('Root directory: '
-                    f'{docker_info.get("DockerRootDir", "UNKNOWN")}\n')
+            f.write(f'Version: {docker_info["ServerVersion"]}\n')
+            f.write(f'Root directory: {docker_info["DockerRootDir"]}\n')
             f.write('Drivers:\n')
-            f.write('\tStorage: '
-                    f'{docker_info.get("Driver", "UNKNOWN")}\n')
-            f.write('\tCgroupFS: '
-                    f'{docker_info.get("CgroupDriver", "UNKNOWN")} '
-                    f'v{docker_info.get("CgroupVersion", "UNKNOWN")}\n')
+            f.write(f'\tStorage: {docker_info["Driver"]}\n')
+            f.write(f'\tCgroupFS: {docker_info["CgroupDriver"]} '
+                    f'v{docker_info["CgroupVersion"]}\n')
 
         # Set initial metric values and start collection thread
         metrics_path = os.path.join(results_run_path, METRICS_FILE_NAME)
@@ -428,7 +421,7 @@ class Collector():
         self._thread: Thread = Thread(target=_collect_metrics,
                                       daemon=True,
                                       args=(self._stop_event,
-                                            case_name,
+                                            name,
                                             run_id,
                                             metrics_path,
                                             sample_interval,
