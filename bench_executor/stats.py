@@ -198,6 +198,12 @@ class Stats():
 
                 # Next step
                 if entry_step > step:
+                    if entry_step - step > 1:
+                        self._logger.warning(f"{entry_step - step} step(s) "
+                                             "are missing between steps "
+                                             f"[{step},{entry_step}]. "
+                                             "Try increasing the sample time "
+                                             "and re-run.")
                     # Calculate diff of current step if at least 2 entries
                     # for the step exist, if not the diff is 0.0 and we fall
                     # back to the step_begin timestamp which will make sure we
@@ -242,10 +248,12 @@ class Stats():
             timestamps = run[1]
 
             # Do not process incomplete runs
-            msg = f'Number of steps ({self._number_of_steps}) does not ' + \
-                  'match with extracted steps of ' + \
-                  f'run ({len(timestamps)}). Skipping run {run_id}'
-            assert (len(timestamps) == self._number_of_steps), msg
+            if (len(timestamps) != self._number_of_steps):
+                msg = f'Number of steps ({self._number_of_steps}) does ' + \
+                      'not match with extracted steps of ' + \
+                      f'run ({len(timestamps)}). Skipping run {run_id}'
+                self._logger.warning(msg)
+                continue
 
             # Create list of timestamps for each step from all runs
             for step_index in range(self._number_of_steps):
@@ -257,11 +265,19 @@ class Stats():
         summary_entries = []
         index_number = 1
         for step_index, step_timestamps in enumerate(timestamps_by_step):
+            # If we do not have a single timestamp for a step, we cannot
+            # process the data. This can happen when the steps are processed
+            # faster than the configured sample time.
+            if not step_timestamps:
+                self._logger.error("Unable to aggregate because some steps "
+                                   "have no measurements")
+                return False
+
             # We ensure that the number of runs is always uneven so the median
             # is always a measured data point instead of the average of 2 data
             # points with even number of runs
             median_run_id = timestamps_by_step[step_index] \
-                            .index(median(step_timestamps)) + 1
+                .index(median(step_timestamps)) + 1
             median_run_path = os.path.join(self._results_path,
                                            f'run_{median_run_id}')
             median_step_data = self._parse_v2(median_run_path,

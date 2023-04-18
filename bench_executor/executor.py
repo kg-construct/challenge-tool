@@ -300,9 +300,7 @@ class Executor:
 
         stats = Stats(results_path, len(data['steps']), directory,
                       self._verbose)
-        stats.aggregate()
-
-        return True
+        return stats.aggregate()
 
     def clean(self, case: dict) -> bool:
         """Clean a case.
