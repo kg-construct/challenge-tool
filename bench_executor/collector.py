@@ -254,7 +254,7 @@ def _collect_metrics(stop_event: Event, name: str, run: int, metrics_path: str,
 class Collector():
     """Collect metrics samples at a given interval for a run of a case."""
 
-    def __init__(self, name: str, results_run_path: str,
+    def __init__(self, case_name: str, results_run_path: str,
                  sample_interval: float, number_of_steps: int, run_id: int,
                  directory: str, verbose: bool):
         """
@@ -265,7 +265,7 @@ class Collector():
         metrics. The file describes:
 
         - **Case**:
-            - Name.
+            - Name of the case.
             - Timestamp when started.
             - Directory of the case.
             - Number of the run.
@@ -285,6 +285,8 @@ class Collector():
 
         Parameters
         ----------
+        case_name : str
+            Name of the case being executed.
         results_run_path : str
             Path to the results directory of the run currently being executed.
         sample_interval : float
@@ -368,7 +370,7 @@ class Collector():
         case_info_file = os.path.join(self._data_path, CASE_INFO_FILE_NAME)
         with open(case_info_file, 'w') as f:
             f.write('===> CASE <===\n')
-            f.write(f'Name: {name}\n')
+            f.write(f'Name: {case_name}\n')
             f.write(f'Timestamp: {datetime.utcnow().isoformat()}\n')
             f.write(f'Directory: {directory}\n')
             f.write(f'Run: {run_id}\n')
@@ -390,16 +392,16 @@ class Collector():
             f.write(f'\tRAM memory: {int(memory_total / 10 ** 6)} MB\n')
             f.write(f'\tSWAP memory: {int(swap_total / 10 ** 6)} MB\n')
             f.write('Storage\n')
-            for name, size in partitions.items():
-                f.write(f'\tDisk "{name}": '
+            for disk_name, size in partitions.items():
+                f.write(f'\tDisk "{disk_name}": '
                         f'{round(size / 10 ** 9, 2)} GB\n')
             f.write('Network\n')
-            for name, stats in network_interfaces.items():
+            for interface_name, stats in network_interfaces.items():
                 speed = stats.speed
                 if speed == 0:
-                    f.write(f'\tInterface "{name}"\n')
+                    f.write(f'\tInterface "{interface_name}"\n')
                 else:
-                    f.write(f'\tInterface "{name}": {speed} mbps\n')
+                    f.write(f'\tInterface "{interface_name}": {speed} mbps\n')
 
             f.write('\n')
             f.write('===> DOCKER <===\n')
@@ -421,7 +423,7 @@ class Collector():
         self._thread: Thread = Thread(target=_collect_metrics,
                                       daemon=True,
                                       args=(self._stop_event,
-                                            name,
+                                            case_name,
                                             run_id,
                                             metrics_path,
                                             sample_interval,
