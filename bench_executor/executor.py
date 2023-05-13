@@ -39,7 +39,7 @@ class Executor:
     """
 
     def __init__(self, main_directory: str, verbose: bool = False,
-                 progress_cb=_progress_cb):
+                 progress_cb=_progress_cb, metadata_filename=METADATA_FILE):
         """Create an instance of the Executor class.
 
         Parameters
@@ -51,6 +51,8 @@ class Executor:
         process_cb : function
             Callback to call when a step is completed of the case. By default,
             a dummy callback is provided if the argument is missing.
+        metadata_filename : str
+            File name to look for step definitions. By default, metadata.json
         """
         self._main_directory = os.path.abspath(main_directory)
         self._schema = {}
@@ -58,6 +60,7 @@ class Executor:
         self._class_module_mapping: Dict[str, Any] = {}
         self._verbose = verbose
         self._progress_cb = progress_cb
+        self._metadata_filename = metadata_filename
         self._logger = Logger(__name__, self._main_directory, self._verbose)
 
         self._init_resources()
@@ -553,7 +556,7 @@ class Executor:
         for directory in glob(self._main_directory):
             for root, dirs, files in os.walk(directory):
                 for file in files:
-                    if os.path.basename(file) == METADATA_FILE:
+                    if os.path.basename(file) == self._metadata_filename:
                         path = os.path.join(root, file)
                         with open(path, 'r') as f:
                             data = json.load(f)
