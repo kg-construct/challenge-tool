@@ -73,6 +73,26 @@ For detailed usage of this tool, please have a look at the
 [README](https://github.com/kg-construct/exectool/blob/main/README.md)
 in the exectool repository.
 
+## Tutorial: Generating summaries of results
+
+Once you have executed your experiments, you can generate summaries with
+the tool through the 'stats' command:
+
+```
+./exectool stats --root=downloads/eswc-kgc-challenge-2023
+```
+
+This will generate the following files for each experiment:
+- `aggregated.csv`: For each step, the median of the step duration for each run
+is calculated and the step of the run with the median duration is used
+to generate this file. This way, outliers are avoided.
+- `summary.csv`: Calculates the diff for each measured metric for each step
+from `aggregated.csv`. This way, the duration, consumed CPU/RAM/... 
+for each step is generated.
+
+Besides these files, a ZIP archive `results.zip` of all experiments with 
+these files is also generated.
+
 ## Tutorial: Running a specific part of the Challenge
 
 In case you want to run a specific part of the challenge such as only the joins,
