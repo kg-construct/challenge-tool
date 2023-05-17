@@ -148,3 +148,15 @@
 [2023-03-02 09:09:40,620] DEBUG    Copying generated files for run
 [2023-03-02 09:09:40,620] DEBUG    Writing run checkpoint...
 [2023-03-02 09:09:40,620] DEBUG    Cooling down for 15s
+[2023-05-17 11:34:41,088] INFO     Logger (INFO) initialized for bench_executor.executor
+[2023-05-17 11:34:41,112] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/test-error-command/metadata.json: Unknown command "DOES_NOT_EXIST" for resource "RMLMapper"
+[2023-05-17 11:34:41,113] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/test-incomplete-data/metadata.json: JSON schema violation
+[2023-05-17 11:34:41,114] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/test-missing-parameter/metadata.json: Missing required parameter "output_file" for command "execute_mapping" of resource "RMLMapper"
+[2023-05-17 11:34:41,115] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/test-missing-resource/metadata.json: Unknown resource "DOES_NOT_EXIST"
+[2023-05-17 11:34:41,116] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/test-no-steps/metadata.json: JSON schema violation
+[2023-05-17 11:34:41,116] INFO     Logger (DEBUG) initialized for bench_executor.executor
+[2023-05-17 11:34:41,146] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/test-error-command/metadata.json: Unknown command "DOES_NOT_EXIST" for resource "RMLMapper"
+[2023-05-17 11:34:41,148] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/test-incomplete-data/metadata.json: JSON schema violation
+[2023-05-17 11:34:41,149] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/test-missing-parameter/metadata.json: Missing required parameter "output_file" for command "execute_mapping" of resource "RMLMapper"
+[2023-05-17 11:34:41,151] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/test-missing-resource/metadata.json: Unknown resource "DOES_NOT_EXIST"
+[2023-05-17 11:34:41,153] ERROR    /home/dylan/Projects/challenge-tool/bench_executor/data/test-cases/test-no-steps/metadata.json: JSON schema violation

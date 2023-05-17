@@ -47,7 +47,6 @@ class RDBTests(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         cls._mysql.stop()
-        cls._postgresql.stop()
         manager.stop_all()
 
     def test_rmlmapper_mysql(self):

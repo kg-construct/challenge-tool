@@ -188,6 +188,8 @@ class Stats():
             # Calculate timestamp diff for each step
             step = 1
             timestamps = []
+            for i in range(self._number_of_steps):
+                timestamps.append(0.0)
             step_end = 0.0
             step_begin = 0.0
             for entry in data:
@@ -209,7 +211,7 @@ class Stats():
                                              f'timestamp instead of diff')
                         diff = step_begin
 
-                    timestamps.append(diff)
+                    timestamps[step] = diff
 
                     # Reset for next step
                     step = entry_step
@@ -219,7 +221,8 @@ class Stats():
                 else:
                     step_end = entry['timestamp']
             # Final step does not cause an increment, add manually
-            timestamps.append(step_end - step_begin)
+            timestamps[step-1] = step_end - step_begin
+            print(len(timestamps))
             runs.append((run_id, timestamps))
 
         # Statistics rely on uneven number of runs
@@ -286,21 +289,44 @@ class Stats():
                     values = []
                     for data in median_step_data:
                         values.append(data[field])
-                    summary[f'{field}_min'] = min(values)
-                    summary[f'{field}_max'] = max(values)
+
+                    try:
+                        summary[f'{field}_min'] = min(values)
+                        summary[f'{field}_max'] = max(values)
+                    except ValueError:
+                        summary[f'{field}_min'] = 0.0
+                        summary[f'{field}_max'] = 0.0
                 # Leave some fields like they are
-                elif field in ['version', 'step']:
-                    summary[field] = median_step_data[0][field]
+                elif field == 'step':
+                    step = step_index + 1
+                    summary[field] = step
+                    if median_step_data:
+                        print(step, median_step_data[0][field])
+                        msg = f'Step number mismatch, expected step {step},' \
+                              f' got step {median_step_data[0][field]}'
+                        assert (step == median_step_data[0][field]), msg
+                elif field == 'version':
+                    summary[field] = 2
                 # All other fields are accumulated data values for which we
                 # report the diff for the step
                 else:
-                    first = median_step_data[0][field]
-                    last = median_step_data[-1][field]
-                    diff = round(last - first, ROUND)
+                    has_samples = True
+
+                    try:
+                        first = median_step_data[0][field]
+                        last = median_step_data[-1][field]
+                        diff = round(last - first, ROUND)
+                    except IndexError:
+                        diff = 0.0
+                        has_samples = False
+
                     if field == 'index':
                         # diff will be 0 for 1 sample, but we have this sample,
                         # so include it
-                        summary['number_of_samples'] = diff + 1
+                        if has_samples:
+                            summary['number_of_samples'] = diff + 1
+                        else:
+                            summary['number_of_samples'] = 0
                     elif field == 'timestamp':
                         summary['duration'] = diff
                     else:
