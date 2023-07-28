@@ -72,8 +72,8 @@ class RMLMapper(Container):
         if self._verbose:
             arguments.append('-vvvvvvvvvvv')
 
-        self._logger.info(f'Executing RMLMapper with arguments '
-                          f'{" ".join(arguments)}')
+        self._logger.debug(f'Executing RMLMapper with arguments '
+                           f'{" ".join(arguments)}')
 
         # Set Java heap to 1/2 of available memory instead of the default 1/4
         max_heap = int(psutil.virtual_memory().total * (1/2))
