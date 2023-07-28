@@ -8,6 +8,7 @@ The Containermanager class allows to create container networks, list all
 running containers and stop them.
 """
 
+import os
 import docker  # type: ignore
 from time import time, sleep
 from typing import List, Tuple
@@ -16,6 +17,7 @@ from bench_executor.logger import Logger
 WAIT_TIME = 1  # seconds
 TIMEOUT_TIME = 600  # seconds
 NETWORK_NAME = 'bench_executor'
+DOCKER_HOST = os.getenv('DOCKER_HOST', 'unix:///var/run/docker.sock')
 
 
 class ContainerManager():
@@ -24,14 +26,10 @@ class ContainerManager():
     def __init__(self):
         """Creates an instance of the ContainerManager class."""
 
-        self._client = docker.from_env()
-
-    def __del__(self):
-        self._client.close()
-
     def list_all(self):
         """List all available containers."""
-        return self._client.containers.list(all=True)
+        with docker.DockerClient(base_url=DOCKER_HOST) as client:
+            return client.containers.list(all=True)
 
     def stop_all(self):
         """Stop all containers."""
@@ -60,10 +58,11 @@ class ContainerManager():
         name : str
             Name of the network
         """
-        try:
-            self._client.networks.get(name)
-        except docker.errors.NotFound:
-            self._client.networks.create(name)
+        with docker.DockerClient(base_url=DOCKER_HOST) as client:
+            try:
+                client.networks.get(name)
+            except docker.errors.NotFound:
+                client.networks.create(name)
 
 
 class Container():
@@ -93,7 +92,6 @@ class Container():
             Volumes mapping of the container onto the host.
         """
         self._manager = ContainerManager()
-        self._client = docker.from_env()
         self._container = None
         self._container_name = container
         self._name = name
@@ -109,9 +107,6 @@ class Container():
 
         # create network if not exist
         self._manager.create_network(NETWORK_NAME)
-
-    def __del__(self):
-        self._client.close()
 
     @property
     def started(self) -> bool:
@@ -145,14 +140,15 @@ class Container():
         try:
             e = self._environment
             v = self._volumes
-            self._container = self._client.containers.run(self._container_name,
-                                                          command,
-                                                          name=self._name,
-                                                          detach=detach,
-                                                          ports=self._ports,
-                                                          network=NETWORK_NAME,
-                                                          environment=e,
-                                                          volumes=v)
+            with docker.DockerClient(base_url=DOCKER_HOST) as client:
+                self._container = client.containers.run(self._container_name,
+                                                        command,
+                                                        name=self._name,
+                                                        detach=detach,
+                                                        ports=self._ports,
+                                                        network=NETWORK_NAME,
+                                                        environment=e,
+                                                        volumes=v)
             self._started = (self._container is not None)
             return True
         except docker.errors.APIError as e:
@@ -283,6 +279,7 @@ class Container():
             logs.close()
 
         if status_code == 0:
+            self.stop()
             return True
 
         self._logger.error('Command failed while waiting for exit with status '
