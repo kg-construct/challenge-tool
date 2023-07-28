@@ -65,9 +65,6 @@ class Logger:
             log_console.setFormatter(format_console)
             self._logger.addHandler(log_console)
 
-        level_name = logging.getLevelName(self._logger.level)
-        self._logger.debug(f'Logger ({level_name}) initialized for {name}')
-
     def __del__(self):
         """Close any handlers if needed"""
         handlers = self._logger.handlers
