@@ -114,9 +114,26 @@ class Docker():
 
         return logs
 
+    def pull(self, image: str) -> bool:
+        """Pull a Docker image from DockerHub or other registries.
+
+        Parameters
+        ----------
+        image : str
+            Name of the Docker container image.
+
+        Returns
+        -------
+        success : bool
+            True if starting the container was successful.
+        """
+        cmd = f'docker pull -q "{image}"'
+        status_code, output = subprocess.getstatusoutput(cmd)
+        return status_code == 0
+
     def run(self, image: str, command: str, name: str, detach: bool,
             ports: dict, network: str, environment: dict,
-            volumes: List[str]) -> Tuple[bool, str]:
+            volumes: List[str], must_pull: bool = True) -> Tuple[bool, str]:
         """Start a Docker container.
 
         Parameters
@@ -137,6 +154,8 @@ class Docker():
             Environment variables to set.
         volumes : List[str]
             Volumes to mount on the container from the host.
+        must_pull: bool
+            Whether the image should be pulled first, default is True.
 
         Returns
         -------
@@ -145,6 +164,10 @@ class Docker():
         container_id : str
             ID of the container that was started.
         """
+
+        # Make sure the image is available locally
+        if must_pull:
+            self.pull(image)
 
         # Avoid race condition between removing and starting the same container
         removing = False
