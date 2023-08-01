@@ -5,7 +5,6 @@ import sys
 import tarfile
 import argparse
 import subprocess
-import atexit
 import requests
 from datetime import datetime
 from signal import signal, SIGINT
@@ -33,15 +32,6 @@ CHUNK_SIZE = 8192
 
 stop = False
 wait_for_user = False
-manager = Manager()
-
-
-@atexit.register
-def _clean():
-    """Clean up all running containers before exiting."""
-    if len(manager.list_all()) > 0:
-        print('Cleaning up before exiting...')
-        manager.stop_all()
 
 
 def _format_progress(index: int, number_of_cases: int,
@@ -91,9 +81,6 @@ def signal_handler_interrupt(signum, frame):
         stop = True
         print('Pressing again CTRL+C will exit immediately!')
     else:
-        if len(manager.list_all()) > 0:
-            print('Cleaning up before exiting...')
-            manager.stop_all()
         sys.exit(EXIT_CODE_INTERRUPTED)
 
 

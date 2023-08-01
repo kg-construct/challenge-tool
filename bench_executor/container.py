@@ -8,47 +8,22 @@ The Containermanager class allows to create container networks, list all
 running containers and stop them.
 """
 
-import os
-import docker  # type: ignore
 from time import time, sleep
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 from bench_executor.logger import Logger
+from bench_executor.docker import Docker
 
 WAIT_TIME = 1  # seconds
 TIMEOUT_TIME = 600  # seconds
 NETWORK_NAME = 'bench_executor'
-DOCKER_HOST = os.getenv('DOCKER_HOST', 'unix:///var/run/docker.sock')
 
 
 class ContainerManager():
     """Manage containers and networks."""
 
-    def __init__(self):
+    def __init__(self, docker: Docker):
         """Creates an instance of the ContainerManager class."""
-
-    def list_all(self):
-        """List all available containers."""
-        with docker.DockerClient(base_url=DOCKER_HOST) as client:
-            return client.containers.list(all=True)
-
-    def stop_all(self):
-        """Stop all containers."""
-        stopped = False
-        removed = False
-
-        for container in self.list_all():
-            try:
-                container.stop()
-                stopped = True
-            except docker.errors.APIError:
-                pass
-            try:
-                container.remove()
-                removed = True
-            except docker.errors.APIError:
-                pass
-            print(f'Container {container.name}: stopped: {stopped} '
-                  f'removed: {removed}')
+        self._docker = docker
 
     def create_network(self, name: str):
         """Create a container network.
@@ -58,11 +33,7 @@ class ContainerManager():
         name : str
             Name of the network
         """
-        with docker.DockerClient(base_url=DOCKER_HOST) as client:
-            try:
-                client.networks.get(name)
-            except docker.errors.NotFound:
-                client.networks.create(name)
+        self._docker.create_network(name)
 
 
 class Container():
@@ -91,8 +62,9 @@ class Container():
         volumes : list
             Volumes mapping of the container onto the host.
         """
-        self._manager = ContainerManager()
-        self._container = None
+        self._docker = Docker(logger)
+        self._manager = ContainerManager(self._docker)
+        self._container_id: Optional[str] = None
         self._container_name = container
         self._name = name
         self._ports = ports
@@ -137,25 +109,15 @@ class Container():
         success : bool
             Whether running the container was successfull or not.
         """
-        try:
-            e = self._environment
-            v = self._volumes
-            with docker.DockerClient(base_url=DOCKER_HOST) as client:
-                self._container = client.containers.run(self._container_name,
-                                                        command,
-                                                        name=self._name,
-                                                        detach=detach,
-                                                        ports=self._ports,
-                                                        network=NETWORK_NAME,
-                                                        environment=e,
-                                                        volumes=v)
-            self._started = (self._container is not None)
-            return True
-        except docker.errors.APIError as e:
-            self._logger.error(f'Failed to start container: {e}')
+        e = self._environment
+        v = self._volumes
+        self._started, self._container_id = \
+            self._docker.run(self._container_name, command, self._name, detach,
+                             self._ports, NETWORK_NAME, e, v)
 
-        self._logger.error(f'Starting container "{self._name}" failed!')
-        return False
+        if not self._started:
+            self._logger.error(f'Starting container "{self._name}" failed!')
+        return self._started
 
     def exec(self, command: str) -> Tuple[bool, List[str]]:
         """Execute a command in the container.
@@ -174,18 +136,13 @@ class Container():
         """
         logs: List[str] = []
 
-        try:
-            if self._container is None:
-                self._logger.error('Container is not initialized yet')
-                return False, []
-            exit_code, output = self._container.exec_run(command)
-            logs = output.decode()
-            for line in logs.split('\n'):
-                self._logger.debug(line.strip())
-            if exit_code == 0:
-                return True, logs
-        except docker.errors.APIError as e:
-            self._logger.error(f'Failed to execute command: {e}')
+        if self._container_id is None:
+            self._logger.error('Container is not initialized yet')
+            return False, []
+        exit_code = self._docker.exec(self._container_id, command)
+        logs = self._docker.logs(self._container_id)
+        if exit_code == 0:
+            return True, logs
 
         return False, logs
 
@@ -211,17 +168,16 @@ class Container():
             self._logger.error(f'Command "{command}" failed')
             return False
 
-        if self._container is None:
+        if self._container_id is None:
             self._logger.error('Container is not initialized yet')
             return False
 
         start = time()
         found_line = False
-        logs = self._container.logs(stream=True, follow=True)
+        logs = self._docker.logs(self._container_id)
         lines = []
         if logs is not None:
             for line in logs:
-                line = line.decode().strip()
                 lines.append(line)
                 self._logger.debug(line)
 
@@ -234,7 +190,6 @@ class Container():
                     found_line = True
                     break
 
-            logs.close()
             if found_line:
                 sleep(WAIT_TIME)
                 return True
@@ -264,19 +219,17 @@ class Container():
         if not self.run(command):
             return False
 
-        if self._container is None:
+        if self._container_id is None:
             self._logger.error('Container is not initialized yet')
             return False
 
-        status_code = self._container.wait()['StatusCode']
-        logs = self._container.logs(stream=True, follow=True)
+        status_code = self._docker.wait(self._container_id)
+        logs = self._docker.logs(self._container_id)
         if logs is not None:
             for line in logs:
-                line = line.decode().strip()
                 # On success, logs are collected when the container is stopped.
                 if status_code != 0:
                     self._logger.error(line)
-            logs.close()
 
         if status_code == 0:
             self.stop()
@@ -296,20 +249,10 @@ class Container():
         success : bool
             Whether stopping the container was successfull or not.
         """
-        try:
-            if self._container is not None:
-                logs = self._container.logs()
-                if logs is not None:
-                    logs = logs.decode()
-                    for line in logs.split('\n'):
-                        self._logger.debug(line)
 
-                self._container.stop()
-                self._container.remove(v=True)
-            return True
-        # Containers which are already stopped will raise an error which we can
-        # ignore
-        except docker.errors.APIError:
-            pass
+        if self._container_id is None:
+            self._logger.error('Container is not initialized yet')
+            return False
 
+        self._docker.stop(self._container_id)
         return True
