@@ -5,7 +5,6 @@ import sys
 import unittest
 import subprocess
 sys.path.append('../')
-from bench_executor.container import ContainerManager  # noqa: E402
 from bench_executor.executor import Executor, \
         CHECKPOINT_FILE_NAME  # noqa: E402
 from bench_executor.collector import METRICS_FILE_NAME  # noqa: E402
@@ -17,14 +16,8 @@ DATA_DIR = os.path.join(os.path.dirname(__file__), '..', 'bench_executor',
 CONFIG_DIR = os.path.join(os.path.dirname(__file__), '..', 'bench_executor',
                           'config')
 
-manager = ContainerManager()
-
 
 class IntegrationTests(unittest.TestCase):
-    @classmethod
-    def tearDownClass(cls):
-        manager.stop_all()
-
     def test_executor_list(self):
         executor = Executor(os.path.join(DATA_DIR, 'test-cases'), False)
         cases = executor.list()
@@ -102,9 +95,5 @@ if __name__ == '__main__':
         pass
     except FileNotFoundError:
         pass
-
-    if len(manager.list_all()) != 0:
-        print('Stopping all containers before starting tests...')
-        manager.stop_all()
 
     unittest.main()

@@ -2,11 +2,9 @@
 
 import os
 import sys
-import atexit
 import unittest
 import subprocess
 import requests
-from glob import glob
 sys.path.append('../')
 from bench_executor.container import ContainerManager  # noqa: E402
 from bench_executor.virtuoso import Virtuoso  # noqa: E402
@@ -19,28 +17,8 @@ DATA_DIR = os.path.join(os.path.dirname(__file__), '..', 'bench_executor',
 CONFIG_DIR = os.path.join(os.path.dirname(__file__), '..', 'bench_executor',
                           'config')
 
-manager = ContainerManager()
-
-
-@atexit.register
-def clean():
-    if len(manager.list_all()) > 0:
-        print('Stopping all containers before exiting...')
-        manager.stop_all()
-
-    for f in glob(f'{os.path.join(DATA_DIR, "shared")}/*'):
-        # Keep original data and mappings
-        if 'student' in f or 'mapping' in f or f.endswith('.q') \
-           or f.endswith('.sql'):
-            continue
-        os.remove(f)
-
 
 class TriplestoreTests(unittest.TestCase):
-    @classmethod
-    def tearDownClass(cls):
-        manager.stop_all()
-
     def test_virtuoso(self):
         QUERY = 'PREFIX foaf: <http://xmlns.com/foaf/0.1/> ' + \
                 'CONSTRUCT WHERE { ?s foaf:name ?o1 . }'
@@ -166,9 +144,5 @@ if __name__ == '__main__':
         pass
     except FileNotFoundError:
         pass
-
-    if len(manager.list_all()) != 0:
-        print('Stopping all containers before starting tests...')
-        manager.stop_all()
 
     unittest.main()

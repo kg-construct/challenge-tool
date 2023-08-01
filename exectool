@@ -10,7 +10,6 @@ from datetime import datetime
 from signal import signal, SIGINT
 from zipfile import ZipFile
 from bench_executor.executor import Executor
-from bench_executor.container import ContainerManager as Manager
 from bench_executor.notifier import Notifier
 
 VERSION = '0.2.0'

@@ -69,19 +69,19 @@ class RMLMapper(Container):
         success : bool
             Whether the execution was successfull or not.
         """
-        if self._verbose:
-            arguments.append('-vvvvvvvvvvv')
-
-        self._logger.debug(f'Executing RMLMapper with arguments '
-                           f'{" ".join(arguments)}')
-
         # Set Java heap to 1/2 of available memory instead of the default 1/4
         max_heap = int(psutil.virtual_memory().total * (1/2))
 
         # Execute command
-        cmd = f'java -Xmx{max_heap} -Xms{max_heap} ' + \
-              '-jar rmlmapper/rmlmapper.jar ' + \
-              f'{" ".join(arguments)}'
+        cmd = f'java -Xmx{max_heap} -Xms{max_heap}' + \
+              ' -jar rmlmapper/rmlmapper.jar'
+        if self._verbose:
+            cmd += ' -vvvvvvvvvvvvv'
+        cmd += f' {" ".join(arguments)}'
+
+        self._logger.debug(f'Executing RMLMapper with arguments '
+                           f'{" ".join(arguments)}')
+
         return self.run_and_wait_for_exit(cmd)
 
     def execute(self, arguments: list) -> bool:
@@ -172,8 +172,8 @@ class RMLMapper(Container):
                 protocol = 'jdbc:postgresql'
             else:
                 raise ValueError(f'Unknown RDB type: "{rdb_type}"')
-            rdb_dsn = f'{protocol}://{rdb_host}:{rdb_port}/' + \
-                      f'{rdb_name}{parameters}'
+            rdb_dsn = f'\'{protocol}://{rdb_host}:{rdb_port}/' + \
+                      f'{rdb_name}{parameters}\''
             arguments.append('-dsn')
             arguments.append(rdb_dsn)
 

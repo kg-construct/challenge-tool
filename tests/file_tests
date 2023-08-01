@@ -2,11 +2,8 @@
 
 import os
 import sys
-import atexit
-import shutil
 import unittest
 import subprocess
-from glob import glob
 from rdflib import Graph
 sys.path.append('../')
 from bench_executor.rmlmapper import RMLMapper  # noqa: E402
@@ -19,28 +16,8 @@ DATA_DIR = os.path.join(os.path.dirname(__file__), '..', 'bench_executor',
 CONFIG_DIR = os.path.join(os.path.dirname(__file__), '..', 'bench_executor',
                           'config')
 
-manager = ContainerManager()
-
-
-@atexit.register
-def clean():
-    if len(manager.list_all()) > 0:
-        print('Stopping all containers before exiting...')
-        manager.stop_all()
-
-    for f in glob(f'{os.path.join(DATA_DIR, "shared")}/*'):
-        # Keep original data and mappings
-        if 'student' in f or 'mapping' in f or f.endswith('.q') \
-           or f.endswith('.sql'):
-            continue
-        os.remove(f)
-
 
 class FileTests(unittest.TestCase):
-    @classmethod
-    def tearDownClass(self):
-        manager.stop_all()
-
     def test_rmlmapper_csv(self):
         rmlmapper = RMLMapper(DATA_DIR, CONFIG_DIR, LOG_DIR, False)
         try:
@@ -107,9 +84,5 @@ if __name__ == '__main__':
         pass
     except FileNotFoundError:
         pass
-
-    if len(manager.list_all()) != 0:
-        print('Stopping all containers before starting tests...')
-        manager.stop_all()
 
     unittest.main()

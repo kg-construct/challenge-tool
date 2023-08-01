@@ -37,7 +37,7 @@ class Docker():
             The exit status code of the executed command.
         """
 
-        cmd = f'docker exec "{container_id}" "{command}"'
+        cmd = f'docker exec "{container_id}" {command}'
         self._logger.debug(f'Executing command in Docker container: {cmd}')
         status_code, output = subprocess.getstatusoutput(cmd)
 
@@ -105,11 +105,9 @@ class Docker():
         """
 
         cmd = f'docker logs "{container_id}"'
-        self._logger.debug(f'Getting logs from Docker container: {cmd}')
         status_code, output = subprocess.getstatusoutput(cmd)
 
         logs = []
-        print(output)
         for line in output.split('\n'):
             logs.append(line.strip())
 
@@ -153,7 +151,7 @@ class Docker():
             cmd = f'docker ps -a | grep "{name}"'
             status_code, output = subprocess.getstatusoutput(cmd)
             if status_code == 0 and not removing:
-                cmd = f'docker rm "{name}"'
+                cmd = f'docker stop "{name}" && docker rm "{name}"'
                 subprocess.getstatusoutput(cmd)
                 self._logger.debug(f'Schedule container "{name}" for removal')
                 removing = True
@@ -168,7 +166,7 @@ class Docker():
         for variable, value in environment.items():
             cmd += f' --env "{variable}={value}"'
         for host_port, container_port in ports.items():
-            cmd += f' --expose "{host_port}:{container_port}"'
+            cmd += f' -p "{host_port}:{container_port}"'
         for volume in volumes:
             cmd += f' -v "{volume}"'
         cmd += f' --network "{network}"'

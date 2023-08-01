@@ -174,12 +174,14 @@ class Container():
 
         start = time()
         found_line = False
-        logs = self._docker.logs(self._container_id)
-        lines = []
-        if logs is not None:
-            for line in logs:
-                lines.append(line)
-                self._logger.debug(line)
+        line_number = 0
+        while (True):
+            logs = self._docker.logs(self._container_id)
+            for index, line in enumerate(logs):
+                # Only print new lines when iterating
+                if index > line_number:
+                    line_number = index
+                    self._logger.debug(line)
 
                 if time() - start > TIMEOUT_TIME:
                     msg = f'Starting container "{self._name}" timed out!'
@@ -196,7 +198,8 @@ class Container():
 
         # Logs are collected on success, log them on failure
         self._logger.error(f'Waiting for container "{self._name}" failed!')
-        for line in lines:
+        logs = self._docker.logs(self._container_id)
+        for line in logs:
             self._logger.error(line)
         return False
 

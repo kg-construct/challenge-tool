@@ -3,18 +3,15 @@
 import os
 import sys
 import unittest
-import atexit
 import filecmp
 import subprocess
 import requests
-import psycopg2
 import pymysql
-from glob import glob
 from time import sleep
 from csv import DictReader
 sys.path.append('../')
 from bench_executor.logger import Logger  # noqa: E402
-from bench_executor.container import Container, ContainerManager  # noqa: E402
+from bench_executor.container import Container  # noqa: E402
 from bench_executor.mysql import MySQL  # noqa: E402
 from bench_executor.collector import Collector, METRICS_FILE_NAME  # noqa: E402
 from bench_executor.stats import Stats, METRICS_AGGREGATED_FILE_NAME, \
@@ -28,32 +25,12 @@ CONFIG_DIR = os.path.join(os.path.dirname(__file__), '..', 'bench_executor',
                           'config')
 CASE_INFO_FILE_NAME = 'case-info.txt'
 
-manager = ContainerManager()
-
-
-@atexit.register
-def clean():
-    if len(manager.list_all()) > 0:
-        print('Stopping all containers before exiting...')
-        manager.stop_all()
-
-    for f in glob(f'{os.path.join(DATA_DIR, "shared")}/*'):
-        # Keep original data and mappings
-        if 'student' in f or 'mapping' in f or f.endswith('.q') \
-           or f.endswith('.sql'):
-            continue
-        os.remove(f)
-
 
 class UnitTests(unittest.TestCase):
-    @classmethod
-    def tearDownClass(self):
-        manager.stop_all()
-
     def test_docker_run(self):
         logger = Logger('test_docker_run', LOG_DIR, True)
         c = Container('nginx:alpine', 'test_docker_run', logger,
-                      {'80/tcp': '8080/tcp'})
+                      {'8080': '80'})
         self.assertTrue(c.run())
         sleep(5)
         r = requests.get('http://localhost:8080')
@@ -64,7 +41,7 @@ class UnitTests(unittest.TestCase):
     def test_docker_run_and_wait_for_log(self):
         logger = Logger('test_docker_run_and_wait_for_log', LOG_DIR, True)
         c = Container('nginx:alpine', 'test_docker_run_and_wait_for_log',
-                      logger, {'80/tcp': '8081/tcp'})
+                      logger, {'8081': '80'})
         self.assertTrue(c.run_and_wait_for_log('start worker process'))
         r = requests.get('http://localhost:8081')
         self.assertEqual(r.status_code, 200)
@@ -74,7 +51,7 @@ class UnitTests(unittest.TestCase):
     def test_docker_run_and_wait_for_exit(self):
         logger = Logger('test_docker_run_and_wait_for_exit', LOG_DIR, True)
         c = Container('alpine:edge', 'test_docker_run_and_wait_for_exit',
-                      logger, {'80/tcp': '8082/tcp'})
+                      logger, {'8082': '80'})
         self.assertTrue(c.run_and_wait_for_exit('sleep 5'))
         c.stop()
 
@@ -264,9 +241,5 @@ if __name__ == '__main__':
         pass
     except FileNotFoundError:
         pass
-
-    if len(manager.list_all()) != 0:
-        print('Stopping all containers before starting tests...')
-        manager.stop_all()
 
     unittest.main()

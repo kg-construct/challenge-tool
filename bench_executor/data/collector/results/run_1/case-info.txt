@@ -1,6 +1,7 @@
 ===> CASE <===
-Timestamp: 2023-05-17T09:41:02.431418
-Directory: /home/dylan/Projects/challenge-tool/tests/./../bench_executor/log
+Name: my-case-name
+Timestamp: 2023-08-01T08:46:51.536158
+Directory: /home/dylan/Projects/metrics-execution-tool/tests/./../bench_executor/log
 Run: 1
 Number of steps: 4
 
@@ -9,7 +10,7 @@ System
 	Hostname: dell-laptop
 	OS name: Fedora Linux
 	OS version: 38 (Workstation Edition)
-	Kernel: Linux-6.2.15-300.fc38.x86_64-x86_64-with-glibc2.37
+	Kernel: Linux-6.4.4-200.fc38.x86_64-x86_64-with-glibc2.37
 	Architecture: x86_64
 CPU
 	Name: Intel(R) Core(TM) i7-8650U CPU @ 1.90GHz

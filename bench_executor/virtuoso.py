@@ -35,7 +35,7 @@ def _spawn_loader(container):
     container : Container
         The Virtuoso container on which the RDF loader should run.
     """
-    success, logs = container.exec('isql -U dba -P root '
+    success, logs = container.exec('\'isql\' -U dba -P root '
                                    'exec="rdf_loader_run();"')
 
 
@@ -77,7 +77,7 @@ class Virtuoso(Container):
                        'VIRT_Parameters_MaxVectorSize': MAX_VECTOR_SIZE,
                        'VIRT_Parameters_NumberOfBuffers': number_of_buffers,
                        'VIRT_Parameters_MaxDirtyBuffers': max_dirty_buffers}
-        super().__init__(f'kgconstruct/virtuoso:v{VERSION}',
+        super().__init__(f'blindreviewing/virtuoso:v{VERSION}',
                          'Virtuoso', self._logger,
                          ports={'8890': '8890', '1111': '1111'},
                          environment=environment,
@@ -130,7 +130,7 @@ class Virtuoso(Container):
         """
         return self.run_and_wait_for_log('Server online at', command=command)
 
-    def load(self, rdf_file: str) -> bool:
+    def load(self, rdf_file: str, rdf_dir: str = '') -> bool:
         """Load an RDF file into Virtuoso.
 
         Currently, only N-Triples files are supported.
@@ -139,15 +139,19 @@ class Virtuoso(Container):
         ----------
         rdf_file : str
             Name of the RDF file to load.
+        rdf_dir : str
+            Name of the directory where RDF file(s) are stored.
+            Default root of the data directory.
 
         Returns
         -------
         success : bool
             Whether the loading was successfull or not.
         """
-        return self.load_parallel(rdf_file, 1)
+        return self.load_parallel(rdf_file, 1, rdf_dir)
 
-    def load_parallel(self, rdf_file: str, cores: int) -> bool:
+    def load_parallel(self, rdf_file: str, cores: int,
+                      rdf_dir: str = '') -> bool:
         """Load an RDF file into Virtuoso in parallel.
 
         Currently, only N-Triples files are supported.
@@ -158,6 +162,9 @@ class Virtuoso(Container):
             Name of the RDF file to load.
         cores : int
             Number of CPU cores for loading.
+        rdf_dir : str
+            Name of the directory where RDF file(s) are stored.
+            Default root of the data directory.
 
         Returns
         -------
@@ -174,8 +181,9 @@ class Virtuoso(Container):
             return False
 
         # Load directory with data
-        success, logs = self.exec('isql -U dba -P root '
-                                  'exec="ld_dir(\'/usr/share/proj/\','
+        directory = f'/usr/share/proj/{rdf_dir}'
+        success, logs = self.exec('\'isql\' -U dba -P root '
+                                  f'exec="ld_dir(\'{directory}\','
                                   f'\'{rdf_file}\', '
                                   '\'http://example.com/graph\');"')
         for line in logs:
@@ -197,14 +205,14 @@ class Virtuoso(Container):
 
         # Re-enable checkpoints and scheduler which are disabled automatically
         # after loading RDF with rdf_loader_run()
-        success, logs = self.exec('isql -U dba -P root exec="checkpoint;"')
+        success, logs = self.exec('\'isql\' -U dba -P root exec="checkpoint;"')
         for line in logs:
             self._logger.debug(line)
         if not success:
             self._logger.error('ISQL re-enable checkpoints query failure')
             return False
 
-        success, logs = self.exec('isql -U dba -P root '
+        success, logs = self.exec('\'isql\' -U dba -P root '
                                   'exec="checkpoint_interval(60);"')
         for line in logs:
             self._logger.debug(line)
@@ -212,7 +220,7 @@ class Virtuoso(Container):
             self._logger.error('ISQL checkpoint interval query failure')
             return False
 
-        success, logs = self.exec('isql -U dba -P root '
+        success, logs = self.exec('\'isql\' -U dba -P root '
                                   'exec="scheduler_interval(10);"')
         for line in logs:
             self._logger.debug(line)
@@ -233,7 +241,7 @@ class Virtuoso(Container):
             Whether stopping Virtuoso was successfull or not.
         """
         # Drop loaded triples
-        success, logs = self.exec('isql -U dba -P root '
+        success, logs = self.exec('\'isql\' -U dba -P root '
                                   'exec="delete from DB.DBA.load_list;"')
         for line in logs:
             self._logger.debug(line)
@@ -241,7 +249,7 @@ class Virtuoso(Container):
             self._logger.error('ISQL delete load list query failure')
             return False
 
-        success, logs = self.exec('isql -U dba -P root '
+        success, logs = self.exec('\'isql\' -U dba -P root '
                                   'exec="rdf_global_reset();"')
         for line in logs:
             self._logger.debug(line)
