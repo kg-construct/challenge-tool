@@ -227,5 +227,5 @@ class Docker():
             return False, {}
 
         info = json.loads(output)
-        self._logger.debug(f'Docker daemon system information: {info}')
+        self._logger.debug('Docker daemon system information successfully')
         return True, info
