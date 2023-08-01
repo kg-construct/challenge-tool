@@ -117,6 +117,9 @@ class Docker():
     def pull(self, image: str) -> bool:
         """Pull a Docker image from DockerHub or other registries.
 
+        If the image exists locally, pulling will be skipped without
+        the force flag.
+
         Parameters
         ----------
         image : str
@@ -127,6 +130,13 @@ class Docker():
         success : bool
             True if starting the container was successful.
         """
+        # Check if the image already exists
+        cmd = f'docker inspect "{image}"'
+        status_code, output = subprocess.getstatusoutput(cmd)
+        if status_code == 0:
+            return True
+
+        # Pull the image
         cmd = f'docker pull -q "{image}"'
         status_code, output = subprocess.getstatusoutput(cmd)
         return status_code == 0
@@ -195,10 +205,10 @@ class Docker():
             cmd += f' -v "{volume}"'
         cmd += f' --network "{network}"'
         cmd += f' {image} {command}'
-        self._logger.debug(f'Running Docker container: {cmd}')
+        self._logger.debug(f'Starting Docker container: {cmd}')
         status_code, container_id = subprocess.getstatusoutput(cmd)
         container_id = container_id.strip()
-        self._logger.info(f'Container "{container_id}" running')
+        self._logger.debug(f'Container "{container_id}" running')
 
         return status_code == 0, container_id
 
