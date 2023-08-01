@@ -353,7 +353,9 @@ class Collector():
         network_interfaces = ps.net_if_stats()
 
         # Docker daemon: version, storage driver, cgroupfs
-        docker_info = self._docker.info()
+        success, docker_info = self._docker.info()
+        if not success:
+            self._logger.error('Failed to retrieve Docker daemon information')
 
         # Write machine information to disk
         case_info_file = os.path.join(self._data_path, CASE_INFO_FILE_NAME)
@@ -393,12 +395,16 @@ class Collector():
 
             f.write('\n')
             f.write('===> DOCKER <===\n')
-            f.write(f'Version: {docker_info["ServerVersion"]}\n')
-            f.write(f'Root directory: {docker_info["DockerRootDir"]}\n')
+            f.write('Version: '
+                    f'{docker_info.get("ServerVersion", "UNKNOWN")}\n')
+            f.write('Root directory: '
+                    f'{docker_info.get("DockerRootDir", "UNKNOWN")}\n')
             f.write('Drivers:\n')
-            f.write(f'\tStorage: {docker_info["Driver"]}\n')
-            f.write(f'\tCgroupFS: {docker_info["CgroupDriver"]} '
-                    f'v{docker_info["CgroupVersion"]}\n')
+            f.write('\tStorage: '
+                    f'{docker_info.get("Driver", "UNKNOWN")}\n')
+            f.write('\tCgroupFS: '
+                    f'{docker_info.get("CgroupDriver", "UNKNOWN")} '
+                    f'v{docker_info.get("CgroupVersion", "UNKNOWN")}\n')
 
         # Set initial metric values and start collection thread
         metrics_path = os.path.join(results_run_path, METRICS_FILE_NAME)
