@@ -6,6 +6,7 @@ for the Container class to control Docker containers. The docker-py module
 which is similar has serious issues with resource leaking for years.
 """
 
+import json
 import subprocess
 from time import sleep
 from typing import List, Tuple
@@ -206,3 +207,25 @@ class Docker():
         self._logger.debug(f'Created network "{network}"')
 
         return status_code == 0
+
+    def info(self) -> Tuple[bool, dict]:
+        """Dump the Docker daemon system information.
+
+        Returns
+        -------
+        success : bool
+            True if the command succeed.
+        info : dict
+            Docker daemon system information as dictionary.
+        """
+
+        # Check if network exist
+        cmd = 'docker info --format \'{{json .}}\''
+        status_code, output = subprocess.getstatusoutput(cmd)
+
+        if status_code != 0:
+            return False, {}
+
+        info = json.loads(output)
+        self._logger.debug(f'Docker daemon system information: {info}')
+        return True, info

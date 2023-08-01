@@ -49,7 +49,6 @@ network.
 import os
 import platform
 import psutil as ps
-from docker import DockerClient  # type: ignore
 from csv import DictWriter
 from time import time, sleep
 from datetime import datetime
@@ -57,6 +56,7 @@ from subprocess import run, CalledProcessError
 from threading import Thread, Event
 from typing import TYPE_CHECKING, Dict, Union, Optional, List
 from bench_executor.logger import Logger
+from bench_executor.docker import Docker
 
 # psutil types are platform specific, provide stubs at runtime as checking is
 # not done there
@@ -296,6 +296,7 @@ class Collector():
         self._number_of_steps: int = number_of_steps
         self._stop_event: Event = Event()
         self._logger = Logger(__name__, directory, verbose)
+        self._docker = Docker(self._logger)
 
         # Only Linux is supported
         if platform.system() != 'Linux':
@@ -352,9 +353,7 @@ class Collector():
         network_interfaces = ps.net_if_stats()
 
         # Docker daemon: version, storage driver, cgroupfs
-        client = DockerClient()
-        docker_info = client.info()
-        client.close()
+        docker_info = self._docker.info()
 
         # Write machine information to disk
         case_info_file = os.path.join(self._data_path, CASE_INFO_FILE_NAME)
