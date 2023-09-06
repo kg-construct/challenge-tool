@@ -17,7 +17,7 @@ import os
 from glob import glob
 from statistics import median
 from csv import DictWriter, DictReader
-from typing import List
+from typing import List, Optional
 from bench_executor.collector import FIELDNAMES, METRICS_FILE_NAME
 from bench_executor.logger import Logger
 
@@ -95,9 +95,10 @@ class Stats():
         verbose : bool
             Enable verbose logs.
         """
-        self._results_path = os.path.abspath(results_path)
-        self._number_of_steps = number_of_steps
+        self._results_path: str = os.path.abspath(results_path)
+        self._number_of_steps: int = number_of_steps
         self._logger = Logger(__name__, directory, verbose)
+        self._parsed_data: dict = {}
 
         if not os.path.exists(results_path):
             msg = f'Results do not exist: {results_path}'
@@ -118,9 +119,17 @@ class Stats():
         except TypeError:
             return -1
 
-    def _parse_v2(self, run_path, fields=FIELDNAMES, step=None):
+    def _parse_v2(self, run_path: str, fields: list = FIELDNAMES,
+                  step: Optional[int] = None):
         """Parse the CSV metrics file in v2 format."""
         data = []
+
+        # Pull data from cache if available
+        if run_path in self._parsed_data:
+            if step is not None:
+                return list(filter(lambda x: x['step'] == step,
+                                   self._parsed_data[run_path]))
+            return self._parsed_data[run_path]
 
         metrics_file = os.path.join(run_path, METRICS_FILE_NAME)
         if not os.path.exists(metrics_file):
@@ -129,15 +138,11 @@ class Stats():
 
         # Filter the fields we want from above, this way we don't load all
         # the data in memory during processing.
+        self._logger.debug('Reading metrics file...')
         with open(metrics_file, 'r') as f:
             reader = DictReader(f)
             for line in reader:
                 corrupt: bool = False
-
-                # Skip steps we don't want to parse
-                if step is not None and \
-                   step != self._parse_field('step', line['step']):
-                    continue
 
                 # Filter on field names
                 filtered = {key: line[key] for key in fields}
@@ -155,6 +160,10 @@ class Stats():
 
                 if not corrupt:
                     data.append(entry)
+
+        self._parsed_data[run_path] = data
+        if step is not None:
+            return list(filter(lambda x: x['step'] == step, data))
 
         return data
 
@@ -182,8 +191,10 @@ class Stats():
                 self._logger.error(f'Run "{run_id}" is not a number')
                 return False
 
-            # Extract steps and timestamps of this run
-            data = self._parse_v2(run_path, fields=['step', 'timestamp'])
+            # Extract steps and timestamps of this run.
+            # v3 is the same as v2 with an additional field
+            data = self._parse_v2(run_path)
+            self._logger.debug(f'Parsed metrics of run {run_id}')
 
             # Calculate timestamp diff for each step
             step = 1
@@ -231,12 +242,15 @@ class Stats():
             print(len(timestamps))
             runs.append((run_id, timestamps))
 
+            self._logger.debug('Timestamp difference between steps calculated')
+
         # Statistics rely on uneven number of runs
         assert (len(runs) % 2 != 0), 'Number of runs should never be even'
 
         # Runs are unsorted as glob does not have a fixed order, sort them
         # based on run number in tuple
         runs.sort(key=lambda element: element[0])
+        self._logger.debug('Sorting runs complete')
 
         # Find median for each step across runs
         timestamps_by_step: List[List[float]] = []
@@ -258,6 +272,7 @@ class Stats():
             # Create list of timestamps for each step from all runs
             for step_index in range(self._number_of_steps):
                 timestamps_by_step[step_index].append(timestamps[step_index])
+        self._logger.debug('Extracted median')
 
         # Create a list of our steps with the run_id which has the median value
         # for that step
@@ -289,6 +304,7 @@ class Stats():
 
                 aggregated_entries.append(entry)
                 index_number += 1
+        self._logger.debug('Generated median run from steps')
 
         # Summary data of a step: diff per step
         for step_index, step_timestamps in enumerate(timestamps_by_step):
@@ -353,6 +369,7 @@ class Stats():
                                        METRICS_AGGREGATED_FILE_NAME)
         summary_file = os.path.join(self._results_path,
                                     METRICS_SUMMARY_FILE_NAME)
+        self._logger.debug('Generated summary')
 
         # Store aggregated data
         with open(aggregated_file, 'w') as f:
@@ -367,5 +384,6 @@ class Stats():
             writer.writeheader()
             for entry in summary_entries:
                 writer.writerow(entry)
+        self._logger.debug('Wrote results')
 
         return True
