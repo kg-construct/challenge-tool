@@ -498,14 +498,14 @@ class Executor:
 
                 if parameters.get('output_file', False) \
                         and not parameters.get('multiple_files', False):
-                    output_file = step['parameters']['output_file']
-                    p1 = os.path.join(directory, 'data/shared', output_file)
-                    p2 = os.path.join(results_run_path, subdir, output_file)
-                    try:
-                        shutil.move(p1, p2)
-                    except FileNotFoundError as e:
-                        msg = f'Cannot find output file "{p1}": {e}'
-                        self._logger.warning(msg)
+                    output_dir = os.path.join(results_run_path, subdir)
+                    for f in glob(os.path.join(directory, 'data/shared', '*.nt')):
+                        p = os.path.join(output_dir, os.path.basename(f))
+                        try:
+                            shutil.move(f, p)
+                        except FileNotFoundError as e:
+                            msg = f'Cannot find output file "{f}": {e}'
+                            self._logger.warning(msg)
 
             # Run complete, mark it
             run_checkpoint_file = os.path.join(results_run_path,
