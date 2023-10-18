@@ -260,12 +260,17 @@ def generate_statistics(executor: Executor):
                                            'aggregated.csv')
             summary_file = os.path.join(directory, 'results',
                                         'summary.csv')
+            stats_file = os.path.join(directory, 'results',
+                                      'stats.csv')
 
             if os.path.exists(aggregated_file):
                 archive.write(aggregated_file)
 
             if os.path.exists(summary_file):
                 archive.write(summary_file)
+
+            if os.path.exists(stats_file):
+                archive.write(stats_file)
 
     print(f'Generated statistics archive: {archive_name}')
 

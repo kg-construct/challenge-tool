@@ -300,6 +300,11 @@ class Executor:
 
         stats = Stats(results_path, len(data['steps']), directory,
                       self._verbose)
+        self._logger.info('Generating stats...')
+        if not stats.statistics():
+            return False
+
+        self._logger.info('Generating aggregated data...')
         return stats.aggregate()
 
     def clean(self, case: dict) -> bool:
