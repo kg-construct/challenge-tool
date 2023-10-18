@@ -14,8 +14,9 @@ be used to compare various cases with each other.
 """
 
 import os
+import psutil
 from glob import glob
-from statistics import median
+from statistics import median, stdev
 from csv import DictWriter, DictReader
 from typing import List, Optional
 from bench_executor.collector import FIELDNAMES, METRICS_FILE_NAME
@@ -123,6 +124,13 @@ class Stats():
                   step: Optional[int] = None):
         """Parse the CSV metrics file in v2 format."""
         data = []
+
+        # Drop cache if memory usage is too high
+        used_memory = psutil.virtual_memory().percent
+        if used_memory > 85.0:
+            print("Releasing memory...")
+            del self._parsed_data
+            self._parsed_data = {}
 
         # Pull data from cache if available
         if run_path in self._parsed_data:
@@ -291,8 +299,11 @@ class Stats():
             # We ensure that the number of runs is always uneven so the median
             # is always a measured data point instead of the average of 2 data
             # points with even number of runs
-            median_run_id = timestamps_by_step[step_index] \
-                .index(median(step_timestamps)) + 1
+            try:
+                median_run_id = timestamps_by_step[step_index] \
+                    .index(median(step_timestamps)) + 1
+            except ValueError:
+                continue
             median_run_path = os.path.join(self._results_path,
                                            f'run_{median_run_id}')
             median_step_data = self._parse_v2(median_run_path,
@@ -309,12 +320,19 @@ class Stats():
         # Summary data of a step: diff per step
         for step_index, step_timestamps in enumerate(timestamps_by_step):
             summary = {}
-            median_run_id = timestamps_by_step[step_index] \
-                .index(median(step_timestamps)) + 1
+            try:
+                median_run_id = timestamps_by_step[step_index] \
+                    .index(median(step_timestamps)) + 1
+            except ValueError:
+                continue
             median_run_path = os.path.join(self._results_path,
                                            f'run_{median_run_id}')
             median_step_data = self._parse_v2(median_run_path,
                                               step=step_index + 1)
+            # If a step failed and no data is available, do not crash
+            if not median_step_data:
+                continue
+
             for field in FIELDNAMES:
                 # Report max memory peak for this step
                 if 'memory' in field:
