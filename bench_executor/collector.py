@@ -52,8 +52,8 @@ import platform
 import psutil as ps
 from docker import DockerClient  # type: ignore
 from csv import DictWriter
+from datetime import datetime, timezone
 from time import time, sleep
-from datetime import datetime
 from subprocess import run, CalledProcessError
 from threading import Thread, Event
 from typing import TYPE_CHECKING, Dict, Union, Optional, List
@@ -371,7 +371,7 @@ class Collector():
         with open(case_info_file, 'w') as f:
             f.write('===> CASE <===\n')
             f.write(f'Name: {case_name}\n')
-            f.write(f'Timestamp: {datetime.utcnow().isoformat()}\n')
+            f.write(f'Timestamp: {datetime.now(timezone.utc).isoformat()}\n')
             f.write(f'Directory: {directory}\n')
             f.write(f'Run: {run_id}\n')
             f.write(f'Number of steps: {self._number_of_steps}\n')
