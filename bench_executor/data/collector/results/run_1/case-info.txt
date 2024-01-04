@@ -1,7 +1,7 @@
 ===> CASE <===
 Name: my-case-name
-Timestamp: 2023-08-01T08:46:51.536158
-Directory: /home/dylan/Projects/metrics-execution-tool/tests/./../bench_executor/log
+Timestamp: 2024-01-04T13:42:20.456726+00:00
+Directory: /home/dylan/PhD/RML-LDES Journal/data/metrics-executor-tool/tests/./../bench_executor/log
 Run: 1
 Number of steps: 4
 
@@ -9,8 +9,8 @@ Number of steps: 4
 System
 	Hostname: dell-laptop
 	OS name: Fedora Linux
-	OS version: 38 (Workstation Edition)
-	Kernel: Linux-6.4.4-200.fc38.x86_64-x86_64-with-glibc2.37
+	OS version: 39 (Workstation Edition)
+	Kernel: Linux-6.6.8-200.fc39.x86_64-x86_64-with-glibc2.38
 	Architecture: x86_64
 CPU
 	Name: Intel(R) Core(TM) i7-8650U CPU @ 1.90GHz
@@ -18,7 +18,7 @@ CPU
 	Minimum frequency: 400 Hz
 	Maximum frequency: 4200 Hz
 Memory
-	RAM memory: 16605 MB
+	RAM memory: 16617 MB
 	SWAP memory: 8589 MB
 Storage
 	Disk "/": 510.48 GB
@@ -27,13 +27,15 @@ Storage
 	Disk "/boot/efi": 0.54 GB
 Network
 	Interface "lo"
-	Interface "enp0s31f6": 1000 mbps
+	Interface "enp0s31f6"
 	Interface "wlp2s0"
-	Interface "docker0"
-	Interface "br-fc27d82a1e7f"
+	Interface "docker0": 10000 mbps
+	Interface "tun0": 10000 mbps
+	Interface "br-8b7c5071df4c"
+	Interface "vethe982ad6": 10000 mbps
 
 ===> DOCKER <===
-Version: 20.10.23
+Version: 24.0.7
 Root directory: /var/lib/docker
 Drivers:
 	Storage: btrfs

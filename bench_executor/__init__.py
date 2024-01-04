@@ -9,5 +9,4 @@ import bench_executor.logger
 import bench_executor.collector
 import bench_executor.stats
 import bench_executor.executor
-import bench_executor.container
-import bench_executor.notifier  # noqa: F401
+import bench_executor.container  # noqa: F401

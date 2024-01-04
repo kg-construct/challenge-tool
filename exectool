@@ -10,7 +10,6 @@ from datetime import datetime
 from signal import signal, SIGINT
 from zipfile import ZipFile
 from bench_executor.executor import Executor
-from bench_executor.notifier import Notifier
 
 VERSION = '0.2.0'
 EXIT_CODE_SUCCESS = 0
@@ -104,8 +103,7 @@ def print_cases(executor: Executor):
         print(f'{index+1: >4}. {name: <85} {number_of_steps: >11}')
 
 
-def execute_cases(executor: Executor, interval: float, runs: int,
-                  notifier: Notifier):
+def execute_cases(executor: Executor, interval: float, runs: int):
     """Execute all cases.
 
     Parameters
@@ -116,9 +114,6 @@ def execute_cases(executor: Executor, interval: float, runs: int,
         Sample interval for collecting metrics.
     runs : int
         Number of runs for each case.
-    notifier : Notifier
-        An instance of the Notifier class to notify the user about the
-        execution.
     """
     global stop
     failures = []
@@ -132,9 +127,6 @@ def execute_cases(executor: Executor, interval: float, runs: int,
         sys.exit(EXIT_CODE_NO_CASES)
 
     print(f'Executing {len(cases)} cases:')
-    notifier.send('Execution STARTED',
-                  f'Executing {len(cases)} cases'
-                  f'\nRoot: "{executor.main_directory}"')
     start_time = datetime.now()
     for index, case in enumerate(cases):
         success = True
@@ -176,16 +168,9 @@ def execute_cases(executor: Executor, interval: float, runs: int,
             except Exception as exception:
                 print(f'Case failure due to exception: {exception}',
                       file=sys.stderr)
-                notifier.send('Execution FAILED',
-                              'Execution failed due to exception\n'
-                              f'Root: {executor.main_directory}\n'
-                              f'Exception: {exception})')
                 sys.exit(EXIT_CODE_FAILED_CASE)
 
             if stop:
-                notifier.send('Execution INTERRUPTED',
-                              'Execution was interrupted by the user\n'
-                              f'Root: {executor.main_directory}')
                 sys.exit(EXIT_CODE_INTERRUPTED)
 
             if not success:
@@ -204,7 +189,6 @@ def execute_cases(executor: Executor, interval: float, runs: int,
             msg += f'{index+1: >4}. {f: <76}\n'
         print(msg)
         msg += f'\nRoot: "{executor.main_directory}"'
-        notifier.send('Execution FAILED', msg)
         sys.exit(EXIT_CODE_FAILED_CASE)
     else:
         text = f'{len(cases)} cases executed succesfully'
@@ -212,7 +196,6 @@ def execute_cases(executor: Executor, interval: float, runs: int,
         msg = f'{text: <89} {progress: <13}'
         print(msg)
         msg = f'{text: <89}\nRoot: "{executor.main_directory}"'
-        notifier.send('Execution FINISHED', msg)
 
 
 def clean_cases(executor: Executor):
@@ -419,26 +402,6 @@ if __name__ == '__main__':
     parser.add_argument('--wait-for-user', dest='wait_for_user',
                         help='Show a prompt when a step is executed before '
                              'going to the next one', action='store_true')
-    parser.add_argument('--smtp-server', dest='smtp_server', default=None,
-                        help='SMTP server to use for sending e-mails',
-                        type=str)
-    parser.add_argument('--smtp-port', dest='smtp_port', default=None,
-                        help='SMTP port to use for sending e-mails',
-                        type=int)
-    parser.add_argument('--smtp-username', dest='smtp_username', default=None,
-                        help='Username to authenticate with SMTP server '
-                             'for sending e-mails',
-                        type=str)
-    parser.add_argument('--smtp-password', dest='smtp_password', default=None,
-                        help='Password to authenticate with SMTP server '
-                             'for sending e-mails',
-                        type=str)
-    parser.add_argument('--smtp-sender', dest='smtp_sender', default=None,
-                        help='Sender\'s e-mailaddress for sending e-mails',
-                        type=str)
-    parser.add_argument('--smtp-receiver', dest='smtp_receiver', default=None,
-                        help='Receiver\'s e-mailaddress for sending emails',
-                        type=str)
     args = parser.parse_args()
 
     # Resolve path
@@ -452,11 +415,6 @@ if __name__ == '__main__':
         download_challenge('2024')
         sys.exit(EXIT_CODE_SUCCESS)
 
-    notifications = False
-    if args.smtp_server and args.smtp_port and args.smtp_username \
-       and args.smtp_password and args.smtp_sender and args.smtp_receiver:
-        notifications = True
-
     if args.verbose:
         print(f'{parser.prog} {VERSION}')
         print(f'Command: {args.command}')
@@ -465,13 +423,6 @@ if __name__ == '__main__':
         print(f'Number of runs: {args.number_of_runs}')
         print(f'Measurement sample interval: {args.interval}s')
         print(f'Wait for user after case: {args.wait_for_user}')
-        if notifications:
-            print(f'SMTP server: {args.smtp_server}')
-            print(f'SMTP port: {args.smtp_port}')
-            print(f'SMTP username: {args.smtp_username}')
-            print(f'SMTP password: {args.smtp_password}')
-            print(f'SMTP sender: {args.smtp_sender}')
-            print(f'SMTP receiver: {args.smtp_receiver}')
 
     if args.interval % 2 == 0:
         print('Number of runs must be uneven for generating statistics',
@@ -494,16 +445,12 @@ if __name__ == '__main__':
         except FileNotFoundError:
             pass
 
-    notifier = Notifier(args.smtp_server, args.smtp_port,
-                        args.smtp_username, args.smtp_password,
-                        args.smtp_sender, args.smtp_receiver, main_directory,
-                        args.verbose)
     e = Executor(main_directory, verbose=args.verbose, progress_cb=progress_cb)
 
     if args.command == 'list':
         print_cases(e)
     elif args.command == 'run':
-        execute_cases(e, args.interval, args.number_of_runs, notifier)
+        execute_cases(e, args.interval, args.number_of_runs)
     elif args.command == 'clean':
         clean_cases(e)
     elif args.command == 'stats':
