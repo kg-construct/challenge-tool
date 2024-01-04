@@ -5,7 +5,7 @@ The KGCW Challenge Tool is based on the EXEC (EXperiment ExeCutor).
 to execute benchmarks on tools which are running in Docker.
 EXEC exposes a CLI interface `exectool`.
 
-## Quick Start KGCW Challenge 2023
+## Quick Start KGCW Challenge 2024
 
 *This installation guide is tested with Ubuntu 22.04 LTS, but other Linux distributions work as well.*
 
@@ -29,19 +29,19 @@ sudo usermod -aG docker $USER
 
 :warning: You have to logout and login again to apply group and user permissions changes on your account.
 
-3. Download the data of the KGCW Challenge 2023 by running the tool as followed:
+3. Download the data of the KGCW Challenge 2024 by running the tool as followed:
 ```
-./exectool download-challenge-2023
+./exectool download-challenge-2024
 ```
 This will fetch the data, mappings, and other files from Zenodo and unpack them.
 Make sure you have sufficient disk space left.
 
 4. Execute the example pipeline included in the challenge:
 ```
-./exectool run --runs=5 --root=downloads/eswc-kgc-challenge-2023
+./exectool run --runs=5 --root=downloads/eswc-kgc-challenge-2024
 ```
 The tool will execute all cases in the
-challenge (`--root=eswc-kgc-challenge-2023`)
+challenge (`--root=eswc-kgc-challenge-2024`)
 five times (`--runs=5`) and report its progress to stdout of your command line.
 The example pipeline uses the following tools:
 
@@ -57,11 +57,11 @@ Pressing it again will forcefully kill the execution and exit as quickly as poss
 :bulb: If you want to keep it running while also disconnect from the machine, you can first start a Screen session:
 
 ```
-# Start a Screen session with name 'eswc-kgc-challenge-2023'
-screen -S eswc-kgc-challenge-2023
+# Start a Screen session with name 'eswc-kgc-challenge-2024
+screen -S eswc-kgc-challenge-2024
 
 # You enter the session, execute any command you want such as the challenge:
-./exectool run --runs=5 --root=downloads/eswc-kgc-challenge-2023
+./exectool run --runs=5 --root=downloads/eswc-kgc-challenge-2024
 
 # Leave the session while letting it run by pressing: 1) CTRL+a  2) CTRL+d
 ```
@@ -79,7 +79,7 @@ Once you have executed your experiments, you can generate summaries with
 the tool through the 'stats' command:
 
 ```
-./exectool stats --root=downloads/eswc-kgc-challenge-2023
+./exectool stats --root=downloads/eswc-kgc-challenge-2024
 ```
 
 This will generate the following files for each experiment:
@@ -105,13 +105,13 @@ Pressing it again will forcefully kill the execution and exit as quickly as poss
 For example:
 
 ```
-./exectool run --runs=5 --root=downloads/eswc-kgc-challenge-2023/joins
+./exectool run --runs=5 --root=downloads/eswc-kgc-challenge-2024/joins
 ```
 
 The same for other parts, such as `properties`:
 
 ```
-./exectool run --runs=5 --root=downloads/eswc-kgc-challenge-2023/properties
+./exectool run --runs=5 --root=downloads/eswc-kgc-challenge-2024/properties
 ```
 
 If you want to be even more precise and only execute a specific scaling, you
@@ -119,7 +119,7 @@ can specify this as well. For example: `mappings` with scaling `mapping_15tm_1po
 looks as followed:
 
 ```
-./exectool run --runs=5 --root=downloads/eswc-kgc-challenge-2023/mappings/mapping_15tm_1pom
+./exectool run --runs=5 --root=downloads/eswc-kgc-challenge-2024/mappings/mapping_15tm_1pom
 ```
 
 Through the CLI `--root` parameter you can specify where the tool starts looking
@@ -129,7 +129,7 @@ If you want to have a list of all possible parts in the challenge, you can
 use the `list` command:
 
 ```
-./exectool list --root=downloads/eswc-kgc-challenge-2023/
+./exectool list --root=downloads/eswc-kgc-challenge-2024/
 ```
 
 This outputs the following:
