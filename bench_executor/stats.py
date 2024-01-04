@@ -207,34 +207,37 @@ class Stats():
                             'duration': [],
                             'number_of_samples': [],
                         }
+                    sbs = summary_by_step[f'step_{step_index}']
 
                     # Some fields are not present on v2 while they are in v3+
                     if field not in step_data[0]:
                         continue
 
                     if 'memory' in field:
-                        if f'{field}_min' not in summary_by_step[f'step_{step_index}']:
-                            summary_by_step[f'step_{step_index}'][f'{field}_min'] = []
-                        if f'{field}_max' not in summary_by_step[f'step_{step_index}']:
-                            summary_by_step[f'step_{step_index}'][f'{field}_max'] = []
-                    elif not any(name in field for name in ['index', 'version', 'step',
-                                                            'name', 'run', 'timestamp']):
-                        if f'{field}_diff' not in summary_by_step[f'step_{step_index}']:
-                            summary_by_step[f'step_{step_index}'][f'{field}_diff'] = []
+                        if f'{field}_min' not in sbs:
+                            sbs[f'{field}_min'] = []
+                        if f'{field}_max' not in sbs:
+                            sbs[f'{field}_max'] = []
+                    elif not any(name in field for name in ['index', 'version',
+                                                            'step', 'name',
+                                                            'run',
+                                                            'timestamp']):
+                        if f'{field}_diff' not in sbs:
+                            sbs[f'{field}_diff'] = []
 
                     # Report max memory peak for this step
                     if 'memory' in field:
                         values = []
                         for data in step_data:
                             values.append(data[field])
-                        summary_by_step[f'step_{step_index}'][f'{field}_min'].append(min(values))
-                        summary_by_step[f'step_{step_index}'][f'{field}_max'].append(max(values))
+                        sbs[f'{field}_min'].append(min(values))
+                        sbs[f'{field}_max'].append(max(values))
                     # Skip fields which are not applicable
                     elif field in ['run']:
                         continue
                     # Leave some fields like they are
                     elif field in ['version', 'step', 'name']:
-                        summary_by_step[f'step_{step_index}'][field] = step_data[0][field]
+                        sbs[field] = step_data[0][field]
                     # All other fields are accumulated data values for which we
                     # report the diff for the step
                     else:
@@ -244,11 +247,11 @@ class Stats():
                         if field == 'index':
                             # diff will be 0 for 1 sample, but we have this
                             # sample, so include it
-                            summary_by_step[f'step_{step_index}']['number_of_samples'].append(diff + 1)
+                            sbs['number_of_samples'].append(diff + 1)
                         elif field == 'timestamp':
-                            summary_by_step[f'step_{step_index}']['duration'].append(diff)
+                            sbs['duration'].append(diff)
                         else:
-                            summary_by_step[f'step_{step_index}'][f'{field}_diff'].append(diff)
+                            sbs[f'{field}_diff'].append(diff)
 
         stats_fieldnames = []
         for step in summary_by_step:
@@ -270,12 +273,13 @@ class Stats():
                     stats_fieldnames.append(f'{field}_values')
 
                 try:
-                    stats_step[f'{field}_median'] = median(summary_by_step[step][field])
-                    stats_step[f'{field}_average'] = mean(summary_by_step[step][field])
-                    stats_step[f'{field}_max'] = max(summary_by_step[step][field])
-                    stats_step[f'{field}_min'] = min(summary_by_step[step][field])
-                    stats_step[f'{field}_stdev'] = stdev(summary_by_step[step][field])
-                    stats_step[f'{field}_values'] = summary_by_step[step][field]
+                    field_values = summary_by_step[step][field]
+                    stats_step[f'{field}_median'] = median(field_values)
+                    stats_step[f'{field}_average'] = mean(field_values)
+                    stats_step[f'{field}_max'] = max(field_values)
+                    stats_step[f'{field}_min'] = min(field_values)
+                    stats_step[f'{field}_stdev'] = stdev(field_values)
+                    stats_step[f'{field}_values'] = field_values
                 except Exception as e:
                     print(step, field, summary_by_step[step][field])
                     self._logger.error(f'Generating stats failed: {e}')
