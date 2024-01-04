@@ -1,13 +1,13 @@
-image: "docker:20.10.22-dind"
+image: "docker:24.0.7-dind"
 services:
-  - docker:20.10.22-dind
+  - docker:24.0.7-dind
 
 before_script:
   - apk update
   - apk add python3 py3-pip postgresql-dev gcc python3-dev musl-dev linux-headers
   - docker info
   - python --version
-  - pip install -r requirements.txt
+  - pip install --break-system-packages psycopg2-binary pymysql jsonschema psutil requests rdflib timeout-decorator
 
 stages:
   - Linting
@@ -17,8 +17,8 @@ stages:
 linting:
   stage: Linting
   script:
-  - pip3 install mypy flake8 
-  - pip3 install types-PyMySQL types-html5lib types-jsonschema types-psutil types-psycopg2 types-requests
+  - pip install --break-system-packages mypy flake8 
+  - pip install --break-system-packages types-PyMySQL types-html5lib types-jsonschema types-psutil types-psycopg2 types-requests
   - cd tests
   - ./linting
 
