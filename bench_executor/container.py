@@ -233,6 +233,8 @@ class Container():
                 # On success, logs are collected when the container is stopped.
                 if status_code != 0:
                     self._logger.error(line)
+                else:
+                    self._logger.debug(line)
 
         if status_code == 0:
             self.stop()
