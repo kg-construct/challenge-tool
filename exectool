@@ -24,8 +24,10 @@ EXIT_CODE_SELINUX = -5
 EXIT_CODE_EVEN_RUNS = -6
 EXIT_CODE_INTERRUPTED = -7
 EXIT_CODE_DOWNLOAD_FAILURE = -8
-KGC_CHALLENGE_URL = 'https://zenodo.org/record/7689310/files/challenge.tar.gz?download=1'  # noqa: E501
-KGC_CHALLENGE_FILE_NAME = 'eswc-kgc-challenge-2023.tar.gz'
+KGC_CHALLENGE_2023_URL = 'https://zenodo.org/record/7689310/files/challenge.tar.gz?download=1'  # noqa: E501
+KGC_CHALLENGE_2023_FILE_NAME = 'eswc-kgc-challenge-2023.tar.gz'
+KGC_CHALLENGE_2024_URL = 'https://zenodo.org/record/7689310/files/challenge.tar.gz?download=1'  # noqa: E501
+KGC_CHALLENGE_2024_FILE_NAME = 'eswc-kgc-challenge-2024.tar.gz'
 DOWNLOAD_DIR = 'downloads'
 CHUNK_SIZE = 8192
 
@@ -299,29 +301,45 @@ def generate_statistics(executor: Executor):
     print(f'Generated statistics archive: {archive_name}')
 
 
-def download_challenge():
-    """Download KGC 2023 Challenge
+def download_challenge(edition: str):
+    """Download KGC Challenge
 
     Fetch the archive from Zenodo and unpack it.
+
+    Parameters
+    ----------
+    edition : str
+        Name of the edition to dowload.
     """
-    archive_path: str = os.path.join(DOWNLOAD_DIR, KGC_CHALLENGE_FILE_NAME)
-    extraction_path: str = \
-        os.path.join(DOWNLOAD_DIR,
-                     KGC_CHALLENGE_FILE_NAME.replace('.tar.gz', ''))
+    file_name: str
+    url: str
+
+    if edition == '2023':
+        file_name = KGC_CHALLENGE_2023_FILE_NAME
+        url = KGC_CHALLENGE_2023_URL
+    elif edition == '2024':
+        file_name = KGC_CHALLENGE_2024_FILE_NAME
+        url = KGC_CHALLENGE_2024_URL
+    else:
+        sys.exit()
+
+    archive_path: str = os.path.join(DOWNLOAD_DIR, file_name)
+    extraction_path: str = os.path.join(DOWNLOAD_DIR,
+                                        file_name.replace('.tar.gz', ''))
 
     # Skip download if already exist
     os.makedirs(DOWNLOAD_DIR, exist_ok=True)
 
     # Fetch archive if not downloaded yet
-    with requests.get(KGC_CHALLENGE_URL, stream=True) as r:
+    with requests.get(url, stream=True) as r:
         if r.ok:
             if 'content-length' in r.headers:
                 total_length = int(r.headers['content-length'])
-                print(f'ℹ️  Downloading challenge from {KGC_CHALLENGE_URL} '
+                print(f'ℹ️  Downloading challenge from {url} '
                       f'({round(total_length/10**6, 2):.2f} MB), '
                       'this can take some time...')
             else:
-                print(f'ℹ️  Downloading challenge from {KGC_CHALLENGE_URL}, '
+                print(f'ℹ️  Downloading challenge from {url}, '
                       'this can take some time...')
 
             downloaded_length: int = 0
@@ -338,7 +356,7 @@ def download_challenge():
 
                     f.write(chunk)
         else:
-            print('❌ Download KGC 2023 challenge failed '
+            print(f'❌ Download KGC {edition} challenge failed '
                   f'(HTTP {r.status_code})', file=sys.stderr)
             sys.exit(EXIT_CODE_DOWNLOAD_FAILURE)
 
@@ -375,9 +393,9 @@ def progress_cb(resource: str, name: str, success: bool):
         Whether the execution was succesfull or not.
     """
     if success:
-        print(f'        ✅ {resource : <20}: {name : <50}')
+        print(f'        ✅ {resource: <20}: {name: <50}')
     else:
-        print(f'        ❌ {resource : <20}: {name : <50}')
+        print(f'        ❌ {resource: <20}: {name: <50}')
 
     if wait_for_user:
         input('        ℹ️  Step completed, press any key to continue...')
@@ -385,7 +403,8 @@ def progress_cb(resource: str, name: str, success: bool):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Copyright by (c) '
-                                                 'Dylan Van Assche (2023), '
+                                                 'Dylan Van Assche '
+                                                 '(2022-2024), '
                                                  'available under the MIT '
                                                  'license',
                                      epilog='Please cite our paper if you '
@@ -441,7 +460,10 @@ if __name__ == '__main__':
     main_directory = os.path.expandvars(main_directory)
 
     if 'download-challenge-2023' == args.command:
-        download_challenge()
+        download_challenge('2023')
+        sys.exit(EXIT_CODE_SUCCESS)
+    elif 'download-challenge-2024' == args.command:
+        download_challenge('2024')
         sys.exit(EXIT_CODE_SUCCESS)
 
     notifications = False
