@@ -61,14 +61,14 @@ def _format_progress(index: int, number_of_cases: int,
     seconds = int(delta.total_seconds() - hours * 3600 - minutes * 60)
 
     if minutes == 0 and hours == 0:
-        timestamp = f'{seconds : >5}s'
+        timestamp = f'{seconds: >5}s'
     elif hours == 0:
-        timestamp = f'{minutes : >2}m{seconds : >2}s'
+        timestamp = f'{minutes: >2}m{seconds: >2}s'
     else:
-        timestamp = f'{hours : >2}h{minutes : >2}m'
+        timestamp = f'{hours: >2}h{minutes: >2}m'
 
     # Format progress
-    return f'[{percentage : >4} {timestamp : >6}]'
+    return f'[{percentage: >4} {timestamp: >6}]'
 
 
 def signal_handler_interrupt(signum, frame):
@@ -101,7 +101,7 @@ def print_cases(executor: Executor):
     for index, case in enumerate(cases):
         name = case['data']['name']
         number_of_steps = f'[ {len(case["data"]["steps"])} steps ]'
-        print(f'{index+1 : >4}. {name : <85} {number_of_steps: >11}')
+        print(f'{index+1: >4}. {name: <85} {number_of_steps: >11}')
 
 
 def execute_cases(executor: Executor, interval: float, runs: int,
@@ -144,7 +144,7 @@ def execute_cases(executor: Executor, interval: float, runs: int,
         checkpoint_file = os.path.join(directory, '.done')
 
         progress = _format_progress(index, len(cases), start_time)
-        print(f'{index+1 : >4}. {data["name"][0:62] : <83} {progress : <13}')
+        print(f'{index+1: >4}. {data["name"][0:62]: <83} {progress: <13}')
 
         # Skip cases which are already done
         all_runs_complete = True
@@ -201,7 +201,7 @@ def execute_cases(executor: Executor, interval: float, runs: int,
     if failures:
         msg = f'{len(failures)}/{len(cases)} cases failed to execute:\n'
         for index, f in enumerate(failures):
-            msg += f'{index+1 : >4}. {f : <76}\n'
+            msg += f'{index+1: >4}. {f: <76}\n'
         print(msg)
         msg += f'\nRoot: "{executor.main_directory}"'
         notifier.send('Execution FAILED', msg)
@@ -209,9 +209,9 @@ def execute_cases(executor: Executor, interval: float, runs: int,
     else:
         text = f'{len(cases)} cases executed succesfully'
         progress = _format_progress(len(cases), len(cases), start_time)
-        msg = f'{text : <89} {progress : <13}'
+        msg = f'{text: <89} {progress: <13}'
         print(msg)
-        msg = f'{text : <89}\nRoot: "{executor.main_directory}"'
+        msg = f'{text: <89}\nRoot: "{executor.main_directory}"'
         notifier.send('Execution FINISHED', msg)
 
 
@@ -264,7 +264,7 @@ def generate_statistics(executor: Executor):
         print(f'{len(failures)}/{len(cases)} cases failed to execute:',
               file=sys.stderr)
         for index, f in enumerate(failures):
-            print(f'{index+1 : >4}. {f : <76}')
+            print(f'{index+1: >4}. {f: <76}')
         sys.exit(EXIT_CODE_FAILED_CASE)
 
     print(f'Generated statistics for {len(cases)} cases')

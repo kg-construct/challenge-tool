@@ -396,8 +396,9 @@ class Executor:
                 self._progress_cb('Initializing', step['resource'], success)
 
         # Launch metrics collection
-        collector = Collector(results_run_path, interval, len(data['steps']),
-                              run, directory, self._verbose)
+        collector = Collector(data['name'], results_run_path, interval,
+                              len(data['steps']), run, directory,
+                              self._verbose)
 
         # Execute steps
         for index, step in enumerate(data['steps']):
@@ -499,13 +500,14 @@ class Executor:
                 if parameters.get('output_file', False) \
                         and not parameters.get('multiple_files', False):
                     output_dir = os.path.join(results_run_path, subdir)
-                    for f in glob(os.path.join(directory, 'data',
-                                               'shared', '*.nt')):
-                        p = os.path.join(output_dir, os.path.basename(f))
+                    for out_file in glob(os.path.join(str(directory), 'data',
+                                         'shared', '*.nt')):
+                        out_path = os.path.join(output_dir,
+                                                os.path.basename(out_file))
                         try:
-                            shutil.move(f, p)
+                            shutil.move(out_file, out_path)
                         except FileNotFoundError as e:
-                            msg = f'Cannot find output file "{f}": {e}'
+                            msg = f'Cannot find output file "{out_file}": {e}'
                             self._logger.warning(msg)
 
             # Run complete, mark it
