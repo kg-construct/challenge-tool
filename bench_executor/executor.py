@@ -94,7 +94,10 @@ class Executor:
         # Discover all classes in each module
         for m in self._modules:
             module_name = os.path.splitext(m)[0]
-            imported_module = importlib.import_module(module_name)
+            parent_module = os.path.split(os.path.dirname(__file__))[-1]
+            import_name = '.'.join([parent_module, module_name])
+            print(import_name)
+            imported_module = importlib.import_module(import_name)
             for name, cls in inspect.getmembers(imported_module,
                                                 inspect.isclass):
                 if name.startswith('_') or name[0].islower():
