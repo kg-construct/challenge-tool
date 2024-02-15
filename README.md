@@ -548,6 +548,21 @@ For the RMLMapper, several test cases exist from executing
 the Python abstraction class to perform a complete execution of a pipeline.
 Have a look around in the mentioned directories to see how to add your tool.
 
+**Step 4: try it out!**
+
+You can try out your tool by having a `metadata.json` file with a description
+of the tasks you want to execute. See [./bench_executor/data/test-cases/rmlmapper/virtuoso/transform-csv-to-ntriples](./bench_executor/data/test-cases/rmlmapper/virtuoso/transform-csv-to-ntriples) for an example. Many other examples are available in the test-cases. You should
+specify the class name as `resource` in the `metadata.json` to trigger your
+tool.
+
+If you want to execute it, you can run it as followed:
+
+```
+./exectool --root=./bench_executor/data/test-cases/rmlmapper/virtuoso/transform-csv-to-ntriples run
+```
+
+Add the `--verbose` flag for debug messages.
+
 ## Installation
 
 *This installation guide is tested with Ubuntu 22.04 LTS, but other Linux distributions work as well.*
