@@ -25,7 +25,6 @@ from bench_executor.logger import Logger, LOG_FILE_NAME
 METADATA_FILE = 'metadata.json'
 SCHEMA_FILE = 'metadata.schema'
 CONFIG_DIR = os.path.join(os.path.dirname(__file__), 'config')
-WAIT_TIME = 15  # seconds
 CHECKPOINT_FILE_NAME = '.done'
 
 
@@ -96,7 +95,6 @@ class Executor:
             module_name = os.path.splitext(m)[0]
             parent_module = os.path.split(os.path.dirname(__file__))[-1]
             import_name = '.'.join([parent_module, module_name])
-            print(import_name)
             imported_module = importlib.import_module(import_name)
             for name, cls in inspect.getmembers(imported_module,
                                                 inspect.isclass):
@@ -342,7 +340,7 @@ class Executor:
         return True
 
     def run(self, case: dict, interval: float,
-            run: int, checkpoint: bool) -> bool:
+            run: int, checkpoint: bool, wait_time: int) -> bool:
         """Execute a case.
 
         Execute all steps of a case while collecting metrics and logs.
@@ -361,6 +359,8 @@ class Executor:
             The run number of the case.
         checkpoint : bool
             Enable checkpoints after each run to allow restarts.
+        wait_time : int
+            Cooldown period in seconds between case executions.
 
         Returns
         -------
@@ -393,7 +393,7 @@ class Executor:
             module = self._class_module_mapping[step['resource']]
             resource = getattr(module, step['resource'])(data_path, CONFIG_DIR,
                                                          directory,
-                                                         self._verbose)
+                                                         self._verbose, False)
             if hasattr(resource, 'initialization'):
                 if not resource.initialization():
                     self._logger.error('Failed to initialize resource '
@@ -411,10 +411,12 @@ class Executor:
         # Execute steps
         for index, step in enumerate(data['steps']):
             success = True
+            expect_failure = step['expect_failure']
             module = self._class_module_mapping[step['resource']]
             resource = getattr(module, step['resource'])(data_path, CONFIG_DIR,
                                                          directory,
-                                                         self._verbose)
+                                                         self._verbose,
+                                                         expect_failure)
             active_resources.append(resource)
 
             # Containers may need to start up first before executing a command
@@ -526,10 +528,11 @@ class Executor:
                 d = datetime.now().replace(microsecond=0).isoformat()
                 f.write(f'{d}\n')
 
-        self._logger.debug(f'Cooling down for {WAIT_TIME}s')
-        self._progress_cb('Cooldown', f'Hardware cooldown period {WAIT_TIME}s',
-                          True)
-        sleep(WAIT_TIME)
+        if wait_time > 0:
+            self._logger.debug(f'Cooling down for {wait_time}s')
+            self._progress_cb('Cooldown',
+                              f'Hardware cooldown period {wait_time}s', True)
+            sleep(wait_time)
 
         return success
 

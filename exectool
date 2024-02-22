@@ -103,7 +103,8 @@ def print_cases(executor: Executor):
         print(f'{index+1: >4}. {name: <85} {number_of_steps: >11}')
 
 
-def execute_cases(executor: Executor, interval: float, runs: int):
+def execute_cases(executor: Executor, interval: float, runs: int,
+                  wait_time: int):
     """Execute all cases.
 
     Parameters
@@ -114,6 +115,8 @@ def execute_cases(executor: Executor, interval: float, runs: int):
         Sample interval for collecting metrics.
     runs : int
         Number of runs for each case.
+    wait_time : int
+        Cooldown periode between cases.
     """
     global stop
     failures = []
@@ -158,13 +161,14 @@ def execute_cases(executor: Executor, interval: float, runs: int):
             run_checkpoint_file = os.path.join(results_directory,
                                                f'run_{i}', '.done')
 
-            print(f'      ==> Run #{i} <==')
+            if runs != 1:
+                print(f'      ==> Run #{i} <==')
             if os.path.exists(run_checkpoint_file):
                 print('        ⏩ SKIPPED RUN')
                 continue
 
             try:
-                success = executor.run(case, interval, i, i == runs)
+                success = executor.run(case, interval, i, i == runs, wait_time)
             except Exception as exception:
                 print(f'Case failure due to exception: {exception}',
                       file=sys.stderr)
@@ -402,6 +406,10 @@ if __name__ == '__main__':
                         help='Measurement sample interval for metrics, '
                              'default 0.1s',
                         type=float)
+    parser.add_argument('--wait-time', dest='wait_time', default=15,
+                        help='Cooldown period between case executions, '
+                             'default 15s',
+                        type=int)
     parser.add_argument('--verbose', dest='verbose',
                         help='Turn on verbose output', action='store_true')
     parser.add_argument('--wait-for-user', dest='wait_for_user',
@@ -455,7 +463,7 @@ if __name__ == '__main__':
     if args.command == 'list':
         print_cases(e)
     elif args.command == 'run':
-        execute_cases(e, args.interval, args.number_of_runs)
+        execute_cases(e, args.interval, args.number_of_runs, args.wait_time)
     elif args.command == 'clean':
         clean_cases(e)
     elif args.command == 'stats':

@@ -45,6 +45,7 @@ class Container():
     """
 
     def __init__(self, container: str, name: str, logger: Logger,
+                 expect_failure: bool,
                  ports: dict = {}, environment: dict = {},
                  volumes: List[str] = []):
         """Creates an instance of the Container class.
@@ -57,8 +58,12 @@ class Container():
             Pretty name of the container.
         logger : Logger
             Logger class to use for container logs.
+        expect_failue : bool
+            If a failure is expected or not.
         ports : dict
             Ports mapping of the container onto the host.
+        environment : dict
+            Environment variables to expose to the container.
         volumes : list
             Volumes mapping of the container onto the host.
         """
@@ -76,6 +81,7 @@ class Container():
         self._cgroups_dir = None
         self._started = False
         self._logger = logger
+        self._expect_failure = expect_failure
 
         # create network if not exist
         self._manager.create_network(NETWORK_NAME)
@@ -231,17 +237,25 @@ class Container():
         if logs is not None:
             for line in logs:
                 # On success, logs are collected when the container is stopped.
-                if status_code != 0:
+                if status_code != 0 and not self._expect_failure:
+                    self._logger.error(line)
+                elif status_code == 0 and self._expect_failure:
                     self._logger.error(line)
                 else:
                     self._logger.debug(line)
 
-        if status_code == 0:
+        if status_code == 0 and not self._expect_failure:
+            self.stop()
+            return True
+        elif status_code != 0 and self._expect_failure:
             self.stop()
             return True
 
-        self._logger.error('Command failed while waiting for exit with status '
-                           f'code: {status_code}')
+        if self._expect_failure and status_code == 0:
+            self._logger.error('Expected a failed status code but got "0"')
+        else:
+            self._logger.error('Command failed while waiting for '
+                               f'exit with status code: {status_code}')
         return False
 
     def stop(self) -> bool:

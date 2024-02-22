@@ -13,7 +13,7 @@ from bench_executor.logger import Logger
 class Validate():
     """Validate the RDF graph by comparing it with an expected graph"""
     def __init__(self, data_path: str, config_path: str, directory: str,
-                 verbose: bool):
+                 verbose: bool, expect_failure: bool):
         """Creates an instance of the Validate class.
 
         Parameters
@@ -26,6 +26,8 @@ class Validate():
             Path to the directory to store logs.
         verbose : bool
             Enable verbose logs.
+        expect_failure : bool
+            If a failure is expected.
         """
         self._data_path = os.path.abspath(data_path)
         self._config_path = os.path.abspath(config_path)
@@ -71,10 +73,10 @@ class Validate():
         os.umask(0)
         os.makedirs(path, exist_ok=True)
 
-        self._logger.debug(f'Comparing {graph_path} against '
-                           f'{expected_graph_path}')
-        g1 = Graph().parse(os.path.join(path, graph_path))
-        g2 = Graph().parse(os.path.join(path, expected_graph_path))
+        self._logger.debug(f'Comparing {graph_file} against '
+                           f'{expected_graph_file}')
+        g1 = Graph().parse(os.path.join(path, graph_file))
+        g2 = Graph().parse(os.path.join(path, expected_graph_file))
         iso1 = to_isomorphic(g1)
         iso2 = to_isomorphic(g2)
 
