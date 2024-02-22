@@ -16,6 +16,7 @@ from bench_executor.mysql import MySQL  # noqa: E402
 from bench_executor.collector import Collector, METRICS_FILE_NAME  # noqa: E402
 from bench_executor.stats import Stats, METRICS_AGGREGATED_FILE_NAME, \
         METRICS_SUMMARY_FILE_NAME  # noqa: E402
+from bench_executor.validate import Validate  # noqa: E402
 
 LOG_DIR = os.path.join(os.path.dirname(__file__), '..', 'bench_executor',
                        'log')
@@ -228,6 +229,17 @@ class UnitTests(unittest.TestCase):
         f1 = metrics_summary_file
         f2 = metrics_summary_expected_file
         self.assertTrue(filecmp.cmp(f1, f2, shallow=False))
+
+    def test_validate(self):
+        graph_file = os.path.join(DATA_DIR, 'validate', 'graph.nq')
+        expected_graph_file = os.path.join(DATA_DIR, 'validate',
+                                           'expected.ttl')
+        unexpected_graph_file = os.path.join(DATA_DIR, 'validate',
+                                             'unexpected.nt')
+
+        v = Validate(DATA_DIR, CONFIG_DIR, LOG_DIR, False)
+        self.assertTrue(v.compare_graphs(graph_file, expected_graph_file))
+        self.assertFalse(v.compare_graphs(graph_file, unexpected_graph_file))
 
 
 if __name__ == '__main__':
