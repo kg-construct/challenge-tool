@@ -161,13 +161,16 @@ class Container():
         self._logger.error(f'Starting container "{self._name}" failed!')
         return False
 
-    def exec(self, command: str) -> Tuple[bool, List[str]]:
+    def exec(self, command: str,
+             expect_failure: bool = False) -> Tuple[bool, List[str]]:
         """Execute a command in the container.
 
         Parameters
         ----------
         command : str
             The command to execute in the container.
+        expect_failure : bool
+            True if the command is expected to fail.
 
         Returns
         -------
@@ -182,14 +185,26 @@ class Container():
             if self._container is None:
                 self._logger.error('Container is not initialized yet')
                 return False, []
+            exit_code: int
             exit_code, output = self._container.exec_run(command)
             logs = output.decode()
             for line in logs.split('\n'):
                 self._logger.debug(line.strip())
-            if exit_code == 0:
+            if expect_failure and exit_code != 0:
+                self._logger.debug('Expected failure found with exit code '
+                                   f'"{exit_code}"')
+                return True, logs
+            elif not expect_failure and exit_code == 0:
+                self._logger.debug('Command executed succesfully as expected')
                 return True, logs
         except docker.errors.APIError as e:
             self._logger.error(f'Failed to execute command: {e}')
+
+        if expect_failure:
+            self._logger.error(f'Command succeed with exit code "{exit_code}"'
+                               'but expected failure')
+        else:
+            self._logger.error(f'Command failed with exit code "{exit_code}"')
 
         return False, logs
 
