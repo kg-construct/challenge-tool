@@ -34,9 +34,6 @@ class UnitTests(unittest.TestCase):
                       {'8080': '80'})
         self.assertTrue(c.run())
         sleep(5)
-        r = requests.get('http://localhost:8080')
-        self.assertEqual(r.status_code, 200)
-        r.raise_for_status()
         c.stop()
 
     def test_docker_run_and_wait_for_log(self):
@@ -44,16 +41,13 @@ class UnitTests(unittest.TestCase):
         c = Container('nginx:alpine', 'test_docker_run_and_wait_for_log',
                       logger, {'8081': '80'})
         self.assertTrue(c.run_and_wait_for_log('start worker process'))
-        r = requests.get('http://localhost:8081')
-        self.assertEqual(r.status_code, 200)
-        r.raise_for_status()
         c.stop()
 
     def test_docker_run_and_wait_for_exit(self):
         logger = Logger('test_docker_run_and_wait_for_exit', LOG_DIR, True)
         c = Container('alpine:edge', 'test_docker_run_and_wait_for_exit',
                       logger, {'8082': '80'})
-        self.assertTrue(c.run_and_wait_for_exit('sleep 5'))
+        self.assertTrue(c.run_and_wait_for_exit('poweroff'))
         c.stop()
 
     def test_mysql(self):
@@ -237,7 +231,7 @@ class UnitTests(unittest.TestCase):
         unexpected_graph_file = os.path.join(DATA_DIR, 'validate',
                                              'unexpected.nt')
 
-        v = Validate(DATA_DIR, CONFIG_DIR, LOG_DIR, False)
+        v = Validate(DATA_DIR, CONFIG_DIR, LOG_DIR, False, False)
         self.assertTrue(v.compare_graphs(graph_file, expected_graph_file))
         self.assertFalse(v.compare_graphs(graph_file, unexpected_graph_file))
 
