@@ -45,7 +45,7 @@ class Container():
     """
 
     def __init__(self, container: str, name: str, logger: Logger,
-                 expect_failure: bool,
+                 expect_failure: bool = False,
                  ports: dict = {}, environment: dict = {},
                  volumes: List[str] = []):
         """Creates an instance of the Container class.
