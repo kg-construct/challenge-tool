@@ -60,7 +60,8 @@ class Docker():
 
         cmd = f'docker wait "{container_id}"'
         self._logger.debug(f'Waiting for Docker container: {cmd}')
-        status_code, output = subprocess.getstatusoutput(cmd)
+        docker_code, container_code = subprocess.getstatusoutput(cmd)
+        status_code = int(container_code)
 
         return status_code
 
