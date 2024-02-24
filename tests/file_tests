@@ -7,6 +7,7 @@ import subprocess
 from rdflib import Graph
 sys.path.append('../')
 from bench_executor.rmlmapper import RMLMapper  # noqa: E402
+from bench_executor.burp import BURP  # noqa: E402
 from bench_executor.container import ContainerManager  # noqa: E402
 
 LOG_DIR = os.path.join(os.path.dirname(__file__), '..', 'bench_executor',
@@ -70,6 +71,40 @@ class FileTests(unittest.TestCase):
                 format='ntriples')
         self.assertEqual(len(g), 3)
         rmlmapper.stop()
+
+    def test_burp_json(self):
+        burp = BURP(DATA_DIR, CONFIG_DIR, LOG_DIR, True)
+        try:
+            os.remove(os.path.join(DATA_DIR, 'shared', 'burp_json.nt'))
+        except FileNotFoundError:
+            pass
+        self.assertTrue(burp.execute_mapping('mapping_burp_json.rml.ttl',
+                                             'burp_json.nt',
+                                             'ntriples'))
+        self.assertTrue(os.path.exists(os.path.join(DATA_DIR, 'shared',
+                                                    'burp_json.nt')))
+        g = Graph()
+        g.parse(os.path.join(DATA_DIR, 'shared', 'burp_json.nt'),
+                format='ntriples')
+        self.assertEqual(len(g), 3)
+        burp.stop()
+
+    def test_burp_csv(self):
+        burp = BURP(DATA_DIR, CONFIG_DIR, LOG_DIR, True)
+        try:
+            os.remove(os.path.join(DATA_DIR, 'shared', 'burp_csv.nt'))
+        except FileNotFoundError:
+            pass
+        self.assertTrue(burp.execute_mapping('mapping_burp.rml.ttl',
+                                             'burp_csv.nt',
+                                             'ntriples'))
+        self.assertTrue(os.path.exists(os.path.join(DATA_DIR, 'shared',
+                                                    'burp_csv.nt')))
+        g = Graph()
+        g.parse(os.path.join(DATA_DIR, 'shared', 'burp_csv.nt'),
+                format='ntriples')
+        self.assertEqual(len(g), 3)
+        burp.stop()
 
 
 if __name__ == '__main__':
