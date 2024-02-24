@@ -1,0 +1,16 @@
+################################################################################
+# BURP from a local jar
+################################################################################
+FROM ubuntu:22.04
+# Install latest updates and dependencies
+RUN apt update
+RUN apt upgrade -y
+RUN apt install -y openjdk-21-jdk
+RUN java -version
+
+# Copy jar
+RUN mkdir burp
+COPY *.jar burp/burp.jar
+
+# Expose data folder
+RUN mkdir /data
