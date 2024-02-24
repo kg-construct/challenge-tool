@@ -36,6 +36,18 @@ class UnitTests(unittest.TestCase):
         sleep(5)
         c.stop()
 
+    def test_docker_run_error(self):
+        logger = Logger('test_docker_run_error', LOG_DIR, True)
+        c = Container('alpine:edge', 'test_docker_run_error', logger)
+        self.assertFalse(c.run_and_wait_for_exit('echo "TEST" && exit 1'))
+        c.stop()
+
+    def test_docker_run_error_expect(self):
+        logger = Logger('test_docker_run_error_expect', LOG_DIR, True)
+        c = Container('alpine:edge', 'test_docker_run_error_expect', logger, expect_failure=True)
+        self.assertTrue(c.run_and_wait_for_exit('echo "TEST" && exit 1'))
+        c.stop()
+
     def test_docker_run_and_wait_for_log(self):
         logger = Logger('test_docker_run_and_wait_for_log', LOG_DIR, True)
         c = Container('nginx:alpine', 'test_docker_run_and_wait_for_log',
