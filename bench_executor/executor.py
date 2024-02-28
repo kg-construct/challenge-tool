@@ -411,7 +411,7 @@ class Executor:
         # Execute steps
         for index, step in enumerate(data['steps']):
             success = True
-            expect_failure = step['expect_failure']
+            expect_failure = step.get('expect_failure', False)
             module = self._class_module_mapping[step['resource']]
             resource = getattr(module, step['resource'])(data_path, CONFIG_DIR,
                                                          directory,
