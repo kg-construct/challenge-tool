@@ -147,6 +147,9 @@ class Container():
             return False, []
         exit_code = self._docker.exec(self._container_id, command)
         logs = self._docker.logs(self._container_id)
+        if logs is not None:
+            for line in logs:
+                self._logger.debug(line)
         if exit_code == 0:
             return True, logs
 
