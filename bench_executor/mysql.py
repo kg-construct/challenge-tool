@@ -281,6 +281,8 @@ class MySQL(Container):
         for table in self._tables:
             cursor.execute(f'DROP TABLE IF EXISTS {table};')
             cursor.execute('COMMIT;')
+        cursor.execute(f'DROP DATABASE IF EXISTS {DB}')
+        cursor.execute(f'CREATE DATABASE {DB}')
         self._tables = []
         connection.close()
 
