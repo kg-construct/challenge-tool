@@ -278,13 +278,12 @@ class PostgreSQL(Container):
     @timeout(CLEAR_TABLES_TIMEOUT)
     def _clear_tables(self):
         """Clears all tables with a provided timeout."""
-        connection = psycopg2.connect(host=HOST, database=DB,
+        connection = psycopg2.connect(host=HOST, database='template1',
                                       user=PASSWORD, password=PASSWORD)
+        connection.autocommit = True
         cursor = connection.cursor()
-        for table in self._tables:
-            cursor.execute(f'DROP TABLE IF EXISTS {table};')
-            cursor.execute('COMMIT;')
-        self._tables = []
+        cursor.execute(f'DROP DATABASE IF EXISTS {DB}')
+        cursor.execute(f'CREATE DATABASE {DB}')
         connection.close()
 
     def stop(self) -> bool:
