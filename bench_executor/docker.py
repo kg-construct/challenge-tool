@@ -41,6 +41,7 @@ class Docker():
         cmd = f'docker exec "{container_id}" {command}'
         self._logger.debug(f'Executing command in Docker container: {cmd}')
         status_code, output = subprocess.getstatusoutput(cmd)
+        self._logger.debug(output)
 
         return status_code
 

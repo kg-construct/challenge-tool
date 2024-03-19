@@ -23,7 +23,7 @@ EXIT_CODE_INTERRUPTED = -7
 EXIT_CODE_DOWNLOAD_FAILURE = -8
 KGC_CHALLENGE_2023_URL = 'https://zenodo.org/record/7689310/files/challenge.tar.gz?download=1'  # noqa: E501
 KGC_CHALLENGE_2023_FILE_NAME = 'eswc-kgc-challenge-2023.tar.gz'
-KGC_CHALLENGE_2024_URL = 'https://zenodo.org/record/7689310/files/challenge.tar.gz?download=1'  # noqa: E501
+KGC_CHALLENGE_2024_URL = 'https://zenodo.org/record/10721875/files/challenge.tar.gz?download=1'  # noqa: E501
 KGC_CHALLENGE_2024_FILE_NAME = 'eswc-kgc-challenge-2024.tar.gz'
 DOWNLOAD_DIR = 'downloads'
 CHUNK_SIZE = 8192
@@ -391,7 +391,8 @@ if __name__ == '__main__':
                         version=f'{parser.prog} {VERSION}')
     parser.add_argument(dest='command',
                         help='Command to execute, available commands: '
-                             '"list", "run"',
+                             '"list", "run", "download-challenge-2023"',
+                             '"download-challenge-2024", "stats"',
                         type=str)
     parser.add_argument('--root', dest='main_directory', default='.',
                         help='Root directory of all cases to execute, '
