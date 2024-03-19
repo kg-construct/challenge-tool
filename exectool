@@ -391,7 +391,7 @@ if __name__ == '__main__':
                         version=f'{parser.prog} {VERSION}')
     parser.add_argument(dest='command',
                         help='Command to execute, available commands: '
-                             '"list", "run", "download-challenge-2023"',
+                             '"list", "run", "download-challenge-2023" '
                              '"download-challenge-2024", "stats"',
                         type=str)
     parser.add_argument('--root', dest='main_directory', default='.',
