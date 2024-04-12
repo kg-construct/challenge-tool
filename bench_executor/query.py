@@ -18,7 +18,7 @@ TIMEOUT = 1 * 3600  # 1 hour
 class Query():
     """Execute a query on a SPARQL endpoint."""
     def __init__(self, data_path: str, config_path: str, directory: str,
-                 verbose: bool):
+                 verbose: bool, expect_failure: bool = False):
         """Creates an instance of the Query class.
 
         Parameters
@@ -31,10 +31,13 @@ class Query():
             Path to the directory to store logs.
         verbose : bool
             Enable verbose logs.
+        expect_failure : bool
+            If a failure is expected, default False.
         """
         self._data_path = os.path.abspath(data_path)
         self._config_path = os.path.abspath(config_path)
         self._logger = Logger(__name__, directory, verbose)
+        self._expect_failure = expect_failure
 
         os.umask(0)
         os.makedirs(os.path.join(self._data_path, 'query'), exist_ok=True)
@@ -239,10 +242,15 @@ class Query():
             results = self._execute(query, sparql_endpoint, expect_empty,
                                     headers)
         except Exception as e:
-            msg = f'Failed to execute query "{query}" on endpoint ' + \
-                  f'"{sparql_endpoint}": {e}'
-            self._logger.error(msg)
-            raise e
+            if self._expect_failure:
+                msg = f'Failed to execute query "{query}" on endpoint ' + \
+                      f'"{sparql_endpoint}" but was expected.'
+                self._logger.error(msg)
+            else:
+                msg = f'Failed to execute query "{query}" on endpoint ' + \
+                      f'"{sparql_endpoint}": {e}'
+                self._logger.error(msg)
+                raise e
 
         if results is not None:
             return results
