@@ -43,7 +43,7 @@ class Virtuoso(Container):
     """Virtuoso container to execute SPARQL queries"""
 
     def __init__(self, data_path: str, config_path: str, directory: str,
-                 verbose: bool):
+                 verbose: bool, expect_failure: bool = False):
         """Creates an instance of the Virtuoso class.
 
         Parameters
@@ -56,6 +56,8 @@ class Virtuoso(Container):
             Path to the directory to store logs.
         verbose : bool
             Enable verbose logs.
+        expect_failure : bool
+            If a failure is expected, default False.
         """
         self._data_path = os.path.abspath(data_path)
         self._config_path = os.path.abspath(config_path)
@@ -79,6 +81,7 @@ class Virtuoso(Container):
                        'VIRT_Parameters_MaxDirtyBuffers': max_dirty_buffers}
         super().__init__(f'kgconstruct/virtuoso:v{VERSION}',
                          'Virtuoso', self._logger,
+                         expect_failure=expect_failure,
                          ports={'8890': '8890', '1111': '1111'},
                          environment=environment,
                          volumes=[f'{self._data_path}/shared:/usr/share/proj',
