@@ -96,7 +96,7 @@ class Container():
         """The pretty name of the container"""
         return self._name
 
-    def run(self, command: str = '', detach=True) -> bool:
+    def run(self, command: str = '', *, working_dir=None, detach=True) -> bool:
         """Run the container.
 
         This is used for containers which are long running to provide services
@@ -107,6 +107,8 @@ class Container():
         command : str
             The command to execute in the container, optionally and defaults to
             no command.
+        working_dir : str
+            Set a working directory in the container (optional)
         detach : bool
             If the container may run in the background, default True.
 
@@ -119,7 +121,7 @@ class Container():
         v = self._volumes
         self._started, self._container_id = \
             self._docker.run(self._container_name, command, self._name, detach,
-                             self._ports, NETWORK_NAME, e, v)
+                             self._ports, NETWORK_NAME, e, v, working_dir)
 
         if not self._started:
             self._logger.error(f'Starting container "{self._name}" failed!')
@@ -155,7 +157,7 @@ class Container():
 
         return False, logs
 
-    def run_and_wait_for_log(self, log_line: str, command: str = '') -> bool:
+    def run_and_wait_for_log(self, log_line: str, command: str = '', *, working_dir=None) -> bool:
         """Run the container and wait for a log line to appear.
 
         This blocks until the container's log contains the `log_line`.
@@ -167,13 +169,15 @@ class Container():
         command : str
             The command to execute in the container, optionally and defaults to
             no command.
+        working_dir : str
+            Set a working directory in the container (optional)
 
         Returns
         -------
         success : bool
             Whether the container exited with status code 0 or not.
         """
-        if not self.run(command):
+        if not self.run(command, working_dir=working_dir):
             self._logger.error(f'Command "{command}" failed')
             return False
 
@@ -212,7 +216,7 @@ class Container():
             self._logger.error(line)
         return False
 
-    def run_and_wait_for_exit(self, command: str = '') -> bool:
+    def run_and_wait_for_exit(self, command: str = '', *, working_dir=None) -> bool:
         """Run the container and wait for exit
 
         This blocks until the container exit and gives a status code.
@@ -222,13 +226,15 @@ class Container():
         command : str
             The command to execute in the container, optionally and defaults to
             no command.
+        working_dir : str
+            Set a working directory in the container (optional)
 
         Returns
         -------
        success : bool
             Whether the container exited with status code 0 or not.
         """
-        if not self.run(command):
+        if not self.run(command, working_dir=working_dir):
             return False
 
         if self._container_id is None:
