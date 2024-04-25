@@ -31,7 +31,7 @@ class Rpt(Container):
         self._verbose = verbose
 
         os.makedirs(os.path.join(self._data_path, 'rpt'), exist_ok=True)
-        super().__init__(f'aksw/rpt:{VERSION}', 'rpt' + '-' + str(self._instance),
+        super().__init__(f'aksw/rpt:{VERSION}', 'rpt-kgcc',
                          self._logger, expect_failure=expect_failure,
                          volumes=[f'{self._data_path}/rpt:/data',
                                   f'{self._data_path}/shared:/data/shared'])
