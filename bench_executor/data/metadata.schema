@@ -16,6 +16,10 @@
          "description": "Short description of the case",
          "type": "string"
       },
+      "global_environment": {
+         "description": "Variables to set in the environment to pass to the containers",
+         "type": "object"
+      },
       "steps": {
          "description": "Short description of the case",
          "type": "array",

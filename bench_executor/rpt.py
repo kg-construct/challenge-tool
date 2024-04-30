@@ -21,10 +21,12 @@ class Rpt(Container):
     _INSTANCES = 0
 
     def __init__(self, data_path: str, config_path: str, directory: str,
-                 verbose: bool, expect_failure: bool = False):
+                 verbose: bool, expect_failure: bool = False, environment=None):
         self._instance = Rpt._INSTANCES
         Rpt._INSTANCES = Rpt._INSTANCES + 1
 
+        if environment is None:
+            environment = {}
         self._data_path = os.path.abspath(data_path)
         self._config_path = os.path.abspath(config_path)
         self._logger = Logger(__name__ + '.' + str(self._instance), directory, verbose)
@@ -33,6 +35,7 @@ class Rpt(Container):
         os.makedirs(os.path.join(self._data_path, 'rpt'), exist_ok=True)
         super().__init__(f'aksw/rpt:{VERSION}', 'rpt-kgcc',
                          self._logger, expect_failure=expect_failure,
+                         environment=environment,
                          volumes=[f'{self._data_path}/rpt:/data',
                                   f'{self._data_path}/shared:/data/shared',
                                   f'{self._data_path}/tmp:/tmp'])

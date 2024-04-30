@@ -396,7 +396,8 @@ class Executor:
             module = self._class_module_mapping[step['resource']]
             resource = getattr(module, step['resource'])(data_path, CONFIG_DIR,
                                                          directory,
-                                                         self._verbose, False)
+                                                         self._verbose, False,
+                                                         environment=data.get('global_environment'))
             if hasattr(resource, 'initialization'):
                 if not resource.initialization():
                     self._logger.error('Failed to initialize resource '
@@ -419,7 +420,8 @@ class Executor:
             resource = getattr(module, step['resource'])(data_path, CONFIG_DIR,
                                                          directory,
                                                          self._verbose,
-                                                         expect_failure)
+                                                         expect_failure,
+                                                         environment=data.get('global_environment'))
             active_resources.append(resource)
 
             # Containers may need to start up first before executing a command

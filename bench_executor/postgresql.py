@@ -31,7 +31,7 @@ CLEAR_TABLES_TIMEOUT = 5 * 60  # 5 minutes
 class PostgreSQL(Container):
     """PostgreSQL container for executing SQL queries"""
     def __init__(self, data_path: str, config_path: str, directory: str,
-                 verbose: bool, expect_failure: bool = False):
+                 verbose: bool, expect_failure: bool = False, environment=None):
         """Creates an instance of the PostgreSQL class.
 
         Parameters
@@ -46,6 +46,8 @@ class PostgreSQL(Container):
             Enable verbose logs.
         expect_failure : bool
             If a failure is expected.
+        environment : dict
+            Additional environment variables to use in the container.
         """
         self._data_path = os.path.abspath(data_path)
         self._config_path = os.path.abspath(config_path)
@@ -57,10 +59,13 @@ class PostgreSQL(Container):
         os.makedirs(os.path.join(self._data_path, 'postgresql'), exist_ok=True)
         self._tables: List[str] = []
 
+        if environment is None:
+            environment = {}
         super().__init__(f'blindreviewing/postgresql:v{VERSION}', 'PostgreSQL',
                          self._logger,
                          ports={PORT: PORT},
-                         environment={'POSTGRES_PASSWORD': PASSWORD,
+                         environment={**environment,
+                                      'POSTGRES_PASSWORD': PASSWORD,
                                       'POSTGRES_USER': USER,
                                       'POSTGRES_DB': DB,
                                       'PGPASSWORD': PASSWORD,

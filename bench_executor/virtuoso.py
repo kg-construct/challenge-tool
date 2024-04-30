@@ -43,7 +43,7 @@ class Virtuoso(Container):
     """Virtuoso container to execute SPARQL queries"""
 
     def __init__(self, data_path: str, config_path: str, directory: str,
-                 verbose: bool, expect_failure: bool = False):
+                 verbose: bool, expect_failure: bool = False, environment=None):
         """Creates an instance of the Virtuoso class.
 
         Parameters
@@ -58,6 +58,8 @@ class Virtuoso(Container):
             Enable verbose logs.
         expect_failure : bool
             If a failure is expected, default False.
+        environment : dict
+            Additional environment variables to use in the container.
         """
         self._data_path = os.path.abspath(data_path)
         self._config_path = os.path.abspath(config_path)
@@ -71,7 +73,10 @@ class Virtuoso(Container):
                                 * NUMBER_OF_BUFFERS_PER_GB)
         max_dirty_buffers = int(psutil.virtual_memory().total / (10**9)
                                 * MAX_DIRTY_BUFFERS_PER_GB)
-        environment = {'DBA_PASSWORD': PASSWORD,
+        if environment is None:
+            environment = {}
+        environment = {**environment,
+                       'DBA_PASSWORD': PASSWORD,
                        'VIRT_SPARQL_ResultSetMaxRows': MAX_ROWS,
                        'VIRT_SPARQL_MaxQueryExecutionTime': QUERY_TIMEOUT,
                        'VIRT_SPARQL_ExecutionTimeout': QUERY_TIMEOUT,

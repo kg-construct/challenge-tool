@@ -119,7 +119,27 @@ class Container():
         """
         if environment is None:
             environment = {}
-        e = {**self._environment, **environment}
+
+        def merge_env(e1, e2):
+            r = {}
+            for key in set(e1.keys()).union(e2.keys()):
+                if key in e2:
+                    in_e1 = key in e1
+                    is_arr = isinstance(e2[key], list) or (in_e1 and isinstance(e1[key], list))
+                    if in_e1 and (is_arr or key == "JDK_JAVA_OPTIONS"):
+                        if is_arr:
+                            r[key] = [*e1[key], *e2[key]]
+                        else:
+                            r[key] = f'{e1[key]} {e2[key]}'
+                    else:
+                        r[key] = e2[key]
+                else:
+                    r[key] = e1[key]
+                if isinstance(r[key], list):
+                    r[key] = ' '.join(r[key])
+            return r
+
+        e = merge_env(self._environment, environment)
         v = self._volumes
         self._started, self._container_id = \
             self._docker.run(self._container_name, command, self._name, detach,
