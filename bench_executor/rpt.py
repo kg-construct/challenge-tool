@@ -34,10 +34,11 @@ class Rpt(Container):
         super().__init__(f'aksw/rpt:{VERSION}', 'rpt-kgcc',
                          self._logger, expect_failure=expect_failure,
                          volumes=[f'{self._data_path}/rpt:/data',
-                                  f'{self._data_path}/shared:/data/shared'])
+                                  f'{self._data_path}/shared:/data/shared',
+                                  f'{self._data_path}/tmp:/tmp'])
 
     @timeout(TIMEOUT)
-    def _execute_with_timeout(self, arguments: list, *, working_dir=None) -> bool:
+    def _execute_with_timeout(self, arguments: list, *, working_dir=None, environment=None) -> bool:
         """Execute a mapping with a provided timeout.
 
         Returns
@@ -46,9 +47,10 @@ class Rpt(Container):
             Whether the execution was successfull or not.
         """
         return self.run_and_wait_for_exit(' '.join(map(shlex.quote, arguments)),
-                                          working_dir=working_dir)
+                                          working_dir=working_dir,
+                                          environment=environment)
 
-    def execute(self, command, arguments=None, working_dir='/data/shared') -> bool:
+    def execute(self, command, arguments=None, environment=None, working_dir='/data/shared') -> bool:
         """Execute rpt with given arguments.
 
         Parameters
@@ -65,10 +67,11 @@ class Rpt(Container):
         """
         if arguments is None:
             arguments = []
-        self._logger.debug(f'{self._instance}: Calling rpt {command} with {arguments!r}')
+        self._logger.debug(f'{self._instance}: Calling rpt {command} with {arguments!r} and {environment!r}')
         try:
             result = self._execute_with_timeout([*command.split(' '), *arguments],
-                                                working_dir=working_dir)
+                                                working_dir=working_dir,
+                                                environment=environment)
             self.stop()
             return result
         except TimeoutError:

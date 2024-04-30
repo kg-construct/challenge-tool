@@ -96,7 +96,7 @@ class Container():
         """The pretty name of the container"""
         return self._name
 
-    def run(self, command: str = '', *, working_dir=None, detach=True) -> bool:
+    def run(self, command: str = '', *, working_dir=None, detach=True, environment=None) -> bool:
         """Run the container.
 
         This is used for containers which are long running to provide services
@@ -117,7 +117,9 @@ class Container():
         success : bool
             Whether running the container was successfull or not.
         """
-        e = self._environment
+        if environment is None:
+            environment = {}
+        e = {**self._environment, **environment}
         v = self._volumes
         self._started, self._container_id = \
             self._docker.run(self._container_name, command, self._name, detach,
@@ -216,7 +218,7 @@ class Container():
             self._logger.error(line)
         return False
 
-    def run_and_wait_for_exit(self, command: str = '', *, working_dir=None) -> bool:
+    def run_and_wait_for_exit(self, command: str = '', *, working_dir=None, environment=None) -> bool:
         """Run the container and wait for exit
 
         This blocks until the container exit and gives a status code.
@@ -234,7 +236,7 @@ class Container():
        success : bool
             Whether the container exited with status code 0 or not.
         """
-        if not self.run(command, working_dir=working_dir):
+        if not self.run(command, working_dir=working_dir, environment=environment):
             return False
 
         if self._container_id is None:
