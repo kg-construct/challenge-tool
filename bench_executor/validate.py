@@ -13,7 +13,7 @@ from bench_executor.logger import Logger
 class Validate():
     """Validate the RDF graph by comparing it with an expected graph"""
     def __init__(self, data_path: str, config_path: str, directory: str,
-                 verbose: bool, expect_failure: bool):
+                 verbose: bool, expect_failure: bool, environment=None):
         """Creates an instance of the Validate class.
 
         Parameters

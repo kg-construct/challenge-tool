@@ -18,7 +18,7 @@ TIMEOUT = 1 * 3600  # 1 hour
 class Query():
     """Execute a query on a SPARQL endpoint."""
     def __init__(self, data_path: str, config_path: str, directory: str,
-                 verbose: bool, expect_failure: bool = False):
+                 verbose: bool, expect_failure: bool = False, environment=None):
         """Creates an instance of the Query class.
 
         Parameters
