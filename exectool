@@ -23,7 +23,7 @@ EXIT_CODE_INTERRUPTED = -7
 EXIT_CODE_DOWNLOAD_FAILURE = -8
 KGC_CHALLENGE_2023_URL = 'https://zenodo.org/record/7689310/files/challenge.tar.gz?download=1'  # noqa: E501
 KGC_CHALLENGE_2023_FILE_NAME = 'eswc-kgc-challenge-2023.tar.gz'
-KGC_CHALLENGE_2024_URL = 'https://zenodo.org/record/10721875/files/challenge.tar.gz?download=1'  # noqa: E501
+KGC_CHALLENGE_2024_URL = 'https://zenodo.org/record/10973433/files/challenge.tar.gz?download=1'  # noqa: E501
 KGC_CHALLENGE_2024_FILE_NAME = 'eswc-kgc-challenge-2024.tar.gz'
 DOWNLOAD_DIR = 'downloads'
 CHUNK_SIZE = 8192
