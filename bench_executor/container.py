@@ -96,7 +96,7 @@ class Container():
         """The pretty name of the container"""
         return self._name
 
-    def run(self, command: str = '', detach=True) -> bool:
+    def run(self, command: str = '', *, working_dir=None, detach=True, environment=None) -> bool:
         """Run the container.
 
         This is used for containers which are long running to provide services
@@ -107,6 +107,8 @@ class Container():
         command : str
             The command to execute in the container, optionally and defaults to
             no command.
+        working_dir : str
+            Set a working directory in the container (optional)
         detach : bool
             If the container may run in the background, default True.
 
@@ -115,11 +117,33 @@ class Container():
         success : bool
             Whether running the container was successfull or not.
         """
-        e = self._environment
+        if environment is None:
+            environment = {}
+
+        def merge_env(e1, e2):
+            r = {}
+            for key in set(e1.keys()).union(e2.keys()):
+                if key in e2:
+                    in_e1 = key in e1
+                    is_arr = isinstance(e2[key], list) or (in_e1 and isinstance(e1[key], list))
+                    if in_e1 and (is_arr or key == "JDK_JAVA_OPTIONS"):
+                        if is_arr:
+                            r[key] = [*e1[key], *e2[key]]
+                        else:
+                            r[key] = f'{e1[key]} {e2[key]}'
+                    else:
+                        r[key] = e2[key]
+                else:
+                    r[key] = e1[key]
+                if isinstance(r[key], list):
+                    r[key] = ' '.join(r[key])
+            return r
+
+        e = merge_env(self._environment, environment)
         v = self._volumes
         self._started, self._container_id = \
             self._docker.run(self._container_name, command, self._name, detach,
-                             self._ports, NETWORK_NAME, e, v)
+                             self._ports, NETWORK_NAME, e, v, working_dir)
 
         if not self._started:
             self._logger.error(f'Starting container "{self._name}" failed!')
@@ -155,7 +179,7 @@ class Container():
 
         return False, logs
 
-    def run_and_wait_for_log(self, log_line: str, command: str = '') -> bool:
+    def run_and_wait_for_log(self, log_line: str, command: str = '', *, working_dir=None) -> bool:
         """Run the container and wait for a log line to appear.
 
         This blocks until the container's log contains the `log_line`.
@@ -167,13 +191,15 @@ class Container():
         command : str
             The command to execute in the container, optionally and defaults to
             no command.
+        working_dir : str
+            Set a working directory in the container (optional)
 
         Returns
         -------
         success : bool
             Whether the container exited with status code 0 or not.
         """
-        if not self.run(command):
+        if not self.run(command, working_dir=working_dir):
             self._logger.error(f'Command "{command}" failed')
             return False
 
@@ -212,7 +238,7 @@ class Container():
             self._logger.error(line)
         return False
 
-    def run_and_wait_for_exit(self, command: str = '') -> bool:
+    def run_and_wait_for_exit(self, command: str = '', *, working_dir=None, environment=None) -> bool:
         """Run the container and wait for exit
 
         This blocks until the container exit and gives a status code.
@@ -222,13 +248,15 @@ class Container():
         command : str
             The command to execute in the container, optionally and defaults to
             no command.
+        working_dir : str
+            Set a working directory in the container (optional)
 
         Returns
         -------
        success : bool
             Whether the container exited with status code 0 or not.
         """
-        if not self.run(command):
+        if not self.run(command, working_dir=working_dir, environment=environment):
             return False
 
         if self._container_id is None:

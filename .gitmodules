@@ -1,0 +1,3 @@
+[submodule "rmltk-templates"]
+	path = rmltk-templates
+	url = https://github.com/SimonBin/kgc-challenge-tool-template.git

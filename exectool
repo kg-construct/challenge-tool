@@ -416,6 +416,10 @@ if __name__ == '__main__':
     parser.add_argument('--wait-for-user', dest='wait_for_user',
                         help='Show a prompt when a step is executed before '
                              'going to the next one', action='store_true')
+    parser.add_argument('--metadata', dest='metadata_filename', default='metadata.json',
+                        help='File name with pipeline steps, '
+                             'defaults to metadata.json (RMLMapper sample pipeline)',
+                        type=str)
     args = parser.parse_args()
 
     # Resolve path
@@ -433,6 +437,7 @@ if __name__ == '__main__':
         print(f'{parser.prog} {VERSION}')
         print(f'Command: {args.command}')
         print(f'Root directory: {main_directory}')
+        print(f'Metadata filename: {args.metadata_filename}')
         print(f'Verbose enabled: {args.verbose}')
         print(f'Number of runs: {args.number_of_runs}')
         print(f'Measurement sample interval: {args.interval}s')
@@ -459,7 +464,7 @@ if __name__ == '__main__':
         except FileNotFoundError:
             pass
 
-    e = Executor(main_directory, verbose=args.verbose, progress_cb=progress_cb)
+    e = Executor(main_directory, verbose=args.verbose, progress_cb=progress_cb, metadata_filename=args.metadata_filename)
 
     if args.command == 'list':
         print_cases(e)

@@ -29,7 +29,7 @@ CLEAR_TABLES_TIMEOUT = 5 * 60  # 5 minutes
 class MySQL(Container):
     """MySQL container for executing SQL queries."""
     def __init__(self, data_path: str, config_path: str, directory: str,
-                 verbose: bool, expect_failure: bool = False):
+                 verbose: bool, expect_failure: bool = False, environment=None):
         """Creates an instance of the MySQL class.
 
         Parameters
@@ -44,6 +44,8 @@ class MySQL(Container):
             Enable verbose logs.
         expect_failure : bool
             If we expect a failure or not.
+        environment : dict
+            Additional environment variables to use in the container.
         """
         self._data_path = os.path.abspath(data_path)
         self._config_path = os.path.abspath(config_path)
@@ -54,11 +56,14 @@ class MySQL(Container):
         os.makedirs(tmp_dir, exist_ok=True)
         os.makedirs(os.path.join(self._data_path, 'mysql'), exist_ok=True)
 
+        if environment is None:
+            environment = {}
         super().__init__(f'kgconstruct/mysql:v{VERSION}', 'MySQL',
                          self._logger,
                          expect_failure=expect_failure,
                          ports={PORT: PORT},
-                         environment={'MYSQL_ROOT_PASSWORD': 'root',
+                         environment={**environment,
+                                      'MYSQL_ROOT_PASSWORD': 'root',
                                       'MYSQL_DATABASE': 'db'},
                          volumes=[f'{self._data_path}/shared/:/data/shared',
                                   f'{self._config_path}/mysql/'

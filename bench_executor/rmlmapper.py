@@ -23,7 +23,7 @@ class RMLMapper(Container):
     """RMLMapper container for executing R2RML and RML mappings."""
 
     def __init__(self, data_path: str, config_path: str, directory: str,
-                 verbose: bool, expect_failure: bool = False):
+                 verbose: bool, expect_failure: bool = False, environment=None):
         """Creates an instance of the RMLMapper class.
 
         Parameters
@@ -38,6 +38,8 @@ class RMLMapper(Container):
             Enable verbose logs.
         expect_failure : bool
             If a failure is expected, default False.
+        environment : dict
+            Additional environment variables to use in the container.
         """
         self._data_path = os.path.abspath(data_path)
         self._config_path = os.path.abspath(config_path)
@@ -47,6 +49,7 @@ class RMLMapper(Container):
         os.makedirs(os.path.join(self._data_path, 'rmlmapper'), exist_ok=True)
         super().__init__(f'kgconstruct/rmlmapper:v{VERSION}', 'RMLMapper',
                          self._logger, expect_failure=expect_failure,
+                         environment=environment,
                          volumes=[f'{self._data_path}/rmlmapper:/data',
                                   f'{self._data_path}/shared:/data/shared'])
 

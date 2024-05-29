@@ -9,7 +9,7 @@ which is similar has serious issues with resource leaking for years.
 import json
 import subprocess
 from time import sleep
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 from bench_executor.logger import Logger
 
 
@@ -145,7 +145,7 @@ class Docker():
 
     def run(self, image: str, command: str, name: str, detach: bool,
             ports: dict, network: str, environment: dict,
-            volumes: List[str], must_pull: bool = True) -> Tuple[bool, str]:
+            volumes: List[str], workdir: Optional[str], must_pull: bool = True) -> Tuple[bool, str]:
         """Start a Docker container.
 
         Parameters
@@ -166,6 +166,8 @@ class Docker():
             Environment variables to set.
         volumes : List[str]
             Volumes to mount on the container from the host.
+        workdir : str
+            Working directory for the container.
         must_pull: bool
             Whether the image should be pulled first, default is True.
 
@@ -206,6 +208,8 @@ class Docker():
         for volume in volumes:
             cmd += f' -v "{volume}"'
         cmd += f' --network "{network}"'
+        if workdir is not None:
+            cmd += f' --workdir "{workdir}"'
         cmd += f' {image} {command}'
         self._logger.debug(f'Starting Docker container: {cmd}')
         status_code, container_id = subprocess.getstatusoutput(cmd)

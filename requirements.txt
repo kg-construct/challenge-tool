@@ -5,3 +5,5 @@ psutil
 requests
 rdflib
 timeout-decorator
+cryptography
+pyyaml
